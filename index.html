@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QwidIndex — Universal Anime, Manga & 18+ Media Directory</title>
 
-  <!-- Typography: Plus Jakarta Sans for UI + JetBrains Mono for Radar Countdowns & Metadata -->
+  <!-- Google Fonts: Plus Jakarta Sans for UI + JetBrains Mono for metadata & timers -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -77,7 +77,7 @@
     }
 
     .spotlight-card {
-      background: linear-gradient(135deg, rgba(16, 22, 35, 0.95) 0%, rgba(9, 13, 22, 0.98) 100%);
+      background: linear-gradient(135deg, rgba(16, 22, 35, 0.96) 0%, rgba(9, 13, 22, 0.99) 100%);
       border: 1px solid rgba(255, 255, 255, 0.09);
     }
 
@@ -89,7 +89,7 @@
     .media-card:hover {
       transform: translateY(-4px);
       border-color: rgba(244, 63, 94, 0.5);
-      box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.7), 0 0 18px -4px rgba(244, 63, 94, 0.2);
+      box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.75), 0 0 18px -4px rgba(244, 63, 94, 0.2);
     }
 
     .radar-box {
@@ -197,7 +197,6 @@
 
       <!-- Right: Action Cluster -->
       <div class="flex items-center gap-2 sm:gap-2.5">
-        
         <!-- Search Button (Ctrl+K) -->
         <button 
           onclick="openSearchModal()"
@@ -226,7 +225,6 @@
         >
           <i class="fa-solid fa-bookmark text-xs text-brandPink"></i>
         </button>
-
       </div>
 
     </div>
@@ -279,16 +277,16 @@
         <!-- Middle: Title, Synopsis, Metadata -->
         <div class="relative z-10 space-y-2.5 max-w-2xl my-auto py-4">
           <h1 id="spotlightTitle" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight transition-all">
-            Solo Leveling Season 2: Arise from the Shadow
+            Loading Spotlight...
           </h1>
 
           <p id="spotlightSynopsis" class="text-xs sm:text-sm text-slate-300 line-clamp-3 leading-relaxed transition-all">
-            Following the monumental awakening inside Jeju Island, Sung Jinwoo commands a burgeoning shadow army as the true monarch emerges against ancient monarchs.
+            Streaming entry overview and release calendar details...
           </p>
 
           <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
             <span id="spotlightScore" class="bg-amber-400/10 border border-amber-400/30 text-amber-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
-              <i class="fa-solid fa-star text-[9px]"></i> 8.7
+              <i class="fa-solid fa-star text-[9px]"></i> 9.0
             </span>
             <span id="spotlightFormat" class="bg-cardBg border border-white/10 text-slate-300 px-2 py-0.5 rounded uppercase">
               TV ANIME
@@ -304,7 +302,7 @@
           <div class="flex items-center gap-3">
             <a 
               id="spotlightActionLink"
-              href="entry.html?id=16498&type=anime" 
+              href="entry.html?id=1&type=anime" 
               onclick="logCardClick(currentSpotlightItem)"
               class="px-5 py-2.5 rounded-xl bg-brandPink hover:bg-brandPinkHover text-white font-bold text-xs tracking-wide shadow-glow-pink flex items-center gap-2 transition-all active:scale-98"
             >
@@ -353,7 +351,7 @@
         <!-- Radar Bottom Footer -->
         <div class="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-slate-400">
           <span id="radarFooterLabel">Live Airwaves Sync</span>
-          <button onclick="fetchBroadcastRadar()" class="text-cyan-400 hover:underline flex items-center gap-1">
+          <button onclick="syncAllZones()" class="text-cyan-400 hover:underline flex items-center gap-1">
             <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Refresh
           </button>
         </div>
@@ -458,7 +456,7 @@
 
       </div>
 
-      <!-- Main Media Grid (NO genre pill bar) -->
+      <!-- Main Media Grid (Expanded 18-24 card slots) -->
       <div id="mediaGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 pt-1 transition-all">
         <!-- Dynamically injected category-isolated cards -->
       </div>
@@ -530,7 +528,7 @@
         <input 
           type="text" 
           id="modalSearchInput" 
-          placeholder="Search anime, manga, or 18+ titles... (e.g., Slime, Bleach, Berserk)" 
+          placeholder="Search anime, manga, or 18+ titles... (e.g., Slime, Bleach, Berserk, Overflow)" 
           class="flex-1 bg-transparent border-none text-white text-sm focus:outline-none placeholder:text-slate-500 font-sans"
           autocomplete="off"
         >
@@ -564,7 +562,7 @@
       <!-- Live Search Results -->
       <div id="modalSearchResultsList" class="p-3 overflow-y-auto space-y-1.5 flex-1 text-xs divide-y divide-white/5">
         <div class="text-center py-12 text-slate-500 font-mono text-[11px]">
-          Type at least 2 characters to search the live directory...
+          Type at least 2 characters to search the directory...
         </div>
       </div>
 
@@ -604,7 +602,7 @@
 
         <!-- Drawer List -->
         <div id="drawerItemsList" class="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-white/5 text-xs">
-          <!-- Stored items -->
+          <!-- Stored items populated dynamically -->
         </div>
 
         <!-- Drawer Footer -->
@@ -697,7 +695,32 @@
     let currentSpotlightItem = null;
     let radarCountdownInterval = null;
 
-    // Guaranteed Instant-Load Seed Datasets
+    // Generates a clean, SVG poster card in case any external CDN image is blocked by adblock
+    function getThemedPosterFallback(title, color = '#f43f5e', sub = 'QwidIndex') {
+      const cleanTitle = (title || 'Media').replace(/</g, '').replace(/>/g, '').substring(0, 32);
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 400 560">
+          <defs>
+            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="#020617"/>
+            </linearGradient>
+            <radialGradient id="glow" cx="50%" cy="30%" r="50%">
+              <stop offset="0%" stop-color="${color}" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="560" fill="url(#bg)"/>
+          <circle cx="200" cy="180" r="140" fill="url(#glow)"/>
+          <circle cx="200" cy="180" r="44" fill="${color}" fill-opacity="0.2" stroke="${color}" stroke-width="2"/>
+          <text x="200" y="190" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="28" fill="#ffffff" text-anchor="middle">Q</text>
+          <text x="200" y="320" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="18" fill="#f8fafc" text-anchor="middle">${cleanTitle}</text>
+          <text x="200" y="350" font-family="'JetBrains Mono', monospace" font-size="11" fill="#94a3b8" text-anchor="middle uppercase tracking-widest">${sub}</text>
+        </svg>
+      `;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.trim());
+    }
+
     const SEED_ANIME = [
       {
         id: 16498,
@@ -712,9 +735,9 @@
         rawUnits: 28,
         units: '28 eps',
         genres: ['Action', 'Fantasy', 'Drama'],
-        cover: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'The battle for Paradis reaches its world-shattering climax as Eren Jaeger initiates the Rumbling to eradicate all life outside the island.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1279/131078.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1279/131078.jpg',
+        synopsis: 'The battle for Paradis reaches its world-shattering climax as Eren initiates the Rumbling to eradicate external threats.'
       },
       {
         id: 154587,
@@ -729,9 +752,9 @@
         rawUnits: 28,
         units: '28 eps',
         genres: ['Adventure', 'Drama', 'Fantasy'],
-        cover: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'An elven mage re-traces the nostalgic footprints of her departed comrades while learning what it truly means to connect with mortals.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1015/138075.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1015/138075.jpg',
+        synopsis: 'An elven mage re-traces the nostalgic footprints of her departed comrades while learning what it means to connect with mortals.'
       },
       {
         id: 151807,
@@ -746,9 +769,9 @@
         rawUnits: 12,
         units: '12 eps',
         genres: ['Action', 'Fantasy', 'Adventure'],
-        cover: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'In a world connected by dimensional gates, the weakest E-rank hunter awakens a secretive system granting unlimited power growth.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1898/148005.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1898/148005.jpg',
+        synopsis: 'The weakest E-rank hunter awakens a secretive system granting unlimited power growth through lethal dungeon gates.'
       },
       {
         id: 145064,
@@ -763,9 +786,9 @@
         rawUnits: 23,
         units: '23 eps',
         genres: ['Action', 'Supernatural'],
-        cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'A coordinated curse user ambush on Halloween night in Shibuya attempts to seal Satoru Gojo and overthrow jujutsu society.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1792/138042.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1792/138042.jpg',
+        synopsis: 'A coordinated curse ambush on Halloween night in Shibuya attempts to seal Satoru Gojo and overthrow jujutsu society.'
       },
       {
         id: 163134,
@@ -779,10 +802,10 @@
         year: 2024,
         rawUnits: 1,
         units: '1 film',
-        genres: ['Action', 'Supernatural', 'Gore'],
-        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Denji crosses paths with a mysterious girl working at a cafe, unaware that she holds lethal secrets and explosive firepower.'
+        genres: ['Action', 'Supernatural'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1806/126216.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1806/126216.jpg',
+        synopsis: 'Denji crosses paths with a mysterious girl working at a cafe, unaware that she holds lethal explosive firepower.'
       },
       {
         id: 11061,
@@ -797,9 +820,213 @@
         rawUnits: 148,
         units: '148 eps',
         genres: ['Action', 'Adventure', 'Fantasy'],
-        cover: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Gon Freecss embarks on a dangerous global journey to become an elite Hunter and find his legendary father.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1337/99013.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1337/99013.jpg',
+        synopsis: 'Gon Freecss embarks on a dangerous journey to pass the Hunter exam and discover his father\'s legacy.'
+      },
+      {
+        id: 1535,
+        title: 'Death Note',
+        secondaryTitle: 'Death Note',
+        type: 'anime',
+        format: 'TV',
+        score: '8.6',
+        rawScore: 86,
+        popularity: 640000,
+        year: 2006,
+        rawUnits: 37,
+        units: '37 eps',
+        genres: ['Psychological', 'Supernatural', 'Thriller'],
+        cover: 'https://cdn.myanimelist.net/images/anime/9/9453.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/9/9453.jpg',
+        synopsis: 'A high school genius finds a supernatural notebook that grants him the power to eliminate anyone whose name he writes.'
+      },
+      {
+        id: 5114,
+        title: 'Fullmetal Alchemist: Brotherhood',
+        secondaryTitle: 'Hagane no Renkinjutsushi',
+        type: 'anime',
+        format: 'TV',
+        score: '9.1',
+        rawScore: 91,
+        popularity: 620000,
+        year: 2009,
+        rawUnits: 64,
+        units: '64 eps',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1223/96541.jpg',
+        synopsis: 'Two brothers search for the Philosopher\'s Stone to restore their bodies after a catastrophic failed alchemical ritual.'
+      },
+      {
+        id: 9253,
+        title: 'Steins;Gate',
+        secondaryTitle: 'Steins;Gate',
+        type: 'anime',
+        format: 'TV',
+        score: '9.0',
+        rawScore: 90,
+        popularity: 490000,
+        year: 2011,
+        rawUnits: 24,
+        units: '24 eps',
+        genres: ['Sci-Fi', 'Psychological', 'Thriller'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1935/127974.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1935/127974.jpg',
+        synopsis: 'An eccentric scientist accidentally invents a microwave capable of sending text messages into the past.'
+      },
+      {
+        id: 21,
+        title: 'One Piece (Anime)',
+        secondaryTitle: 'One Piece',
+        type: 'anime',
+        format: 'TV',
+        score: '8.7',
+        rawScore: 87,
+        popularity: 580000,
+        year: 1999,
+        rawUnits: 1100,
+        units: '1100+ eps',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1244/138851.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1244/138851.jpg',
+        synopsis: 'Monkey D. Luffy and the Straw Hat Pirates set sail across the Grand Line in search of the legendary One Piece treasure.'
+      },
+      {
+        id: 1735,
+        title: 'Naruto: Shippuuden',
+        secondaryTitle: 'Naruto Shippuuden',
+        type: 'anime',
+        format: 'TV',
+        score: '8.3',
+        rawScore: 83,
+        popularity: 550000,
+        year: 2007,
+        rawUnits: 500,
+        units: '500 eps',
+        genres: ['Action', 'Adventure', 'Martial Arts'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1565/111305.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1565/111305.jpg',
+        synopsis: 'Naruto Uzumaki returns to the Hidden Leaf Village older and stronger, prepared to rescue Sasuke and protect the ninja world.'
+      },
+      {
+        id: 269,
+        title: 'Bleach: Thousand-Year Blood War',
+        secondaryTitle: 'Bleach: Sennen Kessen-hen',
+        type: 'anime',
+        format: 'TV',
+        score: '8.8',
+        rawScore: 88,
+        popularity: 310000,
+        year: 2022,
+        rawUnits: 26,
+        units: '26 eps',
+        genres: ['Action', 'Supernatural'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1764/126627.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1764/126627.jpg',
+        synopsis: 'The Quincy King Yhwach emerges from the shadows to conquer the Soul Society in a war threatening all dimensions.'
+      },
+      {
+        id: 38000,
+        title: 'Demon Slayer: Hashira Training Arc',
+        secondaryTitle: 'Kimetsu no Yaiba: Hashira Geiko-hen',
+        type: 'anime',
+        format: 'TV',
+        score: '8.4',
+        rawScore: 84,
+        popularity: 430000,
+        year: 2024,
+        rawUnits: 8,
+        units: '8 eps',
+        genres: ['Action', 'Historical', 'Supernatural'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1733/140224.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1733/140224.jpg',
+        synopsis: 'Tanjiro and the Demon Slayer Corps undertake grueling training under the Hashira in preparation for the final war.'
+      },
+      {
+        id: 113417,
+        title: 'Cyberpunk: Edgerunners',
+        secondaryTitle: 'Cyberpunk: Edgerunners',
+        type: 'anime',
+        format: 'TV',
+        score: '8.6',
+        rawScore: 86,
+        popularity: 380000,
+        year: 2022,
+        rawUnits: 10,
+        units: '10 eps',
+        genres: ['Action', 'Sci-Fi', 'Cyberpunk'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1819/126203.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1819/126203.jpg',
+        synopsis: 'A street kid surviving in technology-obsessed Night City loses everything and chooses to stay alive by becoming an edgerunner.'
+      },
+      {
+        id: 19,
+        title: 'Monster (Anime)',
+        secondaryTitle: 'Monster',
+        type: 'anime',
+        format: 'TV',
+        score: '8.9',
+        rawScore: 89,
+        popularity: 280000,
+        year: 2004,
+        rawUnits: 74,
+        units: '74 eps',
+        genres: ['Drama', 'Mystery', 'Psychological'],
+        cover: 'https://cdn.myanimelist.net/images/anime/10/18740.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/10/18740.jpg',
+        synopsis: 'A neurosurgeon uncovers the terrifying dark identity of a young boy whose life he saved years earlier in Germany.'
+      },
+      {
+        id: 147103,
+        title: 'Bocchi the Rock!',
+        secondaryTitle: 'Bocchi the Rock!',
+        type: 'anime',
+        format: 'TV',
+        score: '8.8',
+        rawScore: 88,
+        popularity: 270000,
+        year: 2022,
+        rawUnits: 12,
+        units: '12 eps',
+        genres: ['Comedy', 'Music', 'Slice of Life'],
+        cover: 'https://cdn.myanimelist.net/images/anime/1448/127956.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1448/127956.jpg',
+        synopsis: 'A socially anxious guitarist named Hitori Gotoh unexpectedly finds her rhythm when recruited into an indie pop band.'
+      },
+      {
+        id: 31964,
+        title: 'Boku no Hero Academia',
+        secondaryTitle: 'My Hero Academia',
+        type: 'anime',
+        format: 'TV',
+        score: '8.0',
+        rawScore: 80,
+        popularity: 590000,
+        year: 2016,
+        rawUnits: 13,
+        units: '138+ eps',
+        genres: ['Action', 'Superhero'],
+        cover: 'https://cdn.myanimelist.net/images/anime/10/78745.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/10/78745.jpg',
+        synopsis: 'Born without quirks in a superhero-filled world, Izuku Midoriya inherits the power of the greatest hero, All Might.'
+      },
+      {
+        id: 30276,
+        title: 'One Punch Man',
+        secondaryTitle: 'One Punch Man',
+        type: 'anime',
+        format: 'TV',
+        score: '8.5',
+        rawScore: 85,
+        popularity: 580000,
+        year: 2015,
+        rawUnits: 12,
+        units: '12 eps',
+        genres: ['Action', 'Comedy', 'Parody'],
+        cover: 'https://cdn.myanimelist.net/images/anime/12/76049.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/12/76049.jpg',
+        synopsis: 'Saitama has grown so unfathomably strong that he defeats every monstrous opponent with a single punch.'
       }
     ];
 
@@ -812,14 +1039,14 @@
         format: 'MANGA',
         score: '9.4',
         rawScore: 94,
-        popularity: 280000,
+        popularity: 310000,
         year: 1989,
         rawUnits: 380,
         units: '380 chs',
         genres: ['Action', 'Dark Fantasy', 'Horror'],
-        cover: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Guts, a wandering mercenary known as the Black Swordsman, battles terrifying demonic apostles to defy a cursed destiny.'
+        cover: 'https://cdn.myanimelist.net/images/manga/1/157897.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/1/157897.jpg',
+        synopsis: 'Guts, a wandering mercenary marked with a brand of sacrifice, hunts demonic apostles to defy his cursed fate.'
       },
       {
         id: 30013,
@@ -829,31 +1056,14 @@
         format: 'MANGA',
         score: '9.2',
         rawScore: 92,
-        popularity: 310000,
+        popularity: 340000,
         year: 1997,
         rawUnits: 1120,
         units: '1120 chs',
         genres: ['Action', 'Adventure', 'Fantasy'],
-        cover: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Monkey D. Luffy sails across the Grand Line with the Straw Hat Pirates seeking the ultimate treasure left by Gol D. Roger.'
-      },
-      {
-        id: 30001,
-        title: 'Monster',
-        secondaryTitle: 'Monster',
-        type: 'manga',
-        format: 'MANGA',
-        score: '9.1',
-        rawScore: 91,
-        popularity: 160000,
-        year: 1994,
-        rawUnits: 162,
-        units: '162 chs',
-        genres: ['Mystery', 'Psychological', 'Thriller'],
-        cover: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'A gifted brain surgeon saves the life of a young boy who grows into a remorseless psychopath operating across Cold War Europe.'
+        cover: 'https://cdn.myanimelist.net/images/manga/2/253146.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/2/253146.jpg',
+        synopsis: 'The Straw Hat Pirates navigate the treacherous Grand Line seeking the treasure left by the King of the Pirates.'
       },
       {
         id: 40003,
@@ -863,14 +1073,31 @@
         format: 'MANGA',
         score: '9.2',
         rawScore: 92,
-        popularity: 210000,
+        popularity: 240000,
         year: 1998,
         rawUnits: 327,
         units: '327 chs',
         genres: ['Action', 'Historical', 'Philosophical'],
-        cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Shinmen Takezo transforms from a feral outcast into the legendary swordmaster Miyamoto Musashi.'
+        cover: 'https://cdn.myanimelist.net/images/manga/1/259070.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/1/259070.jpg',
+        synopsis: 'Shinmen Takezo transforms from a reckless brute into the legendary swordmaster Miyamoto Musashi.'
+      },
+      {
+        id: 30001,
+        title: 'Monster (Manga)',
+        secondaryTitle: 'Monster',
+        type: 'manga',
+        format: 'MANGA',
+        score: '9.1',
+        rawScore: 91,
+        popularity: 180000,
+        year: 1994,
+        rawUnits: 162,
+        units: '162 chs',
+        genres: ['Mystery', 'Psychological', 'Thriller'],
+        cover: 'https://cdn.myanimelist.net/images/manga/3/258224.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/3/258224.jpg',
+        synopsis: 'Dr. Kenzo Tenma risks his career and life to track down the charismatic killer he saved as a young surgeon.'
       },
       {
         id: 30644,
@@ -880,14 +1107,14 @@
         format: 'MANGA',
         score: '9.0',
         rawScore: 90,
-        popularity: 195000,
+        popularity: 215000,
         year: 2005,
         rawUnits: 215,
         units: '215 chs',
         genres: ['Action', 'Adventure', 'Historical'],
-        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Thorfinn seeks vengeance in 11th-century Viking Europe before embarking on a transformative quest for peace in Vinland.'
+        cover: 'https://cdn.myanimelist.net/images/manga/2/188925.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/2/188925.jpg',
+        synopsis: 'A young Viking boy seeks vengeance against his father\'s killer before embarking on a transformative quest for peace.'
       },
       {
         id: 85141,
@@ -897,14 +1124,116 @@
         format: 'MANGA',
         score: '8.8',
         rawScore: 88,
-        popularity: 240000,
+        popularity: 270000,
         year: 2018,
         rawUnits: 165,
         units: '165 chs',
         genres: ['Action', 'Supernatural', 'Dark Comedy'],
-        cover: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Denji merges with his pet chainsaw devil Pochita and joins public safety devil hunters for simple dreams of survival.'
+        cover: 'https://cdn.myanimelist.net/images/manga/3/216464.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/3/216464.jpg',
+        synopsis: 'Denji merges with his chainsaw devil pet Pochita, working as an eccentric devil hunter for Tokyo Public Safety.'
+      },
+      {
+        id: 44489,
+        title: 'Oyasumi Punpun',
+        secondaryTitle: 'Goodnight Punpun',
+        type: 'manga',
+        format: 'MANGA',
+        score: '8.9',
+        rawScore: 89,
+        popularity: 220000,
+        year: 2007,
+        rawUnits: 147,
+        units: '147 chs',
+        genres: ['Drama', 'Psychological', 'Slice of Life'],
+        cover: 'https://cdn.myanimelist.net/images/manga/3/164420.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/3/164420.jpg',
+        synopsis: 'The complex, turbulent coming-of-age journey of Punpun Onodera portrayed through an innocent caricature.'
+      },
+      {
+        id: 30704,
+        title: 'Slam Dunk',
+        secondaryTitle: 'Slam Dunk',
+        type: 'manga',
+        format: 'MANGA',
+        score: '9.0',
+        rawScore: 90,
+        popularity: 140000,
+        year: 1990,
+        rawUnits: 276,
+        units: '276 chs',
+        genres: ['Sports', 'Comedy', 'School'],
+        cover: 'https://cdn.myanimelist.net/images/manga/2/258749.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/2/258749.jpg',
+        synopsis: 'Delinquent Hanamichi Sakuragi joins the Shohoku high school basketball team to impress a girl, discovering true passion.'
+      },
+      {
+        id: 30007,
+        title: '20th Century Boys',
+        secondaryTitle: '20th Century Boys',
+        type: 'manga',
+        format: 'MANGA',
+        score: '8.9',
+        rawScore: 89,
+        popularity: 160000,
+        year: 1999,
+        rawUnits: 249,
+        units: '249 chs',
+        genres: ['Mystery', 'Sci-Fi', 'Psychological'],
+        cover: 'https://cdn.myanimelist.net/images/manga/5/260006.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/5/260006.jpg',
+        synopsis: 'Childhood friends realize a sinister cult leader known as "Friend" is reenacting their childhood doomsday scenarios.'
+      },
+      {
+        id: 104276,
+        title: 'Jujutsu Kaisen (Manga)',
+        secondaryTitle: 'Jujutsu Kaisen',
+        type: 'manga',
+        format: 'MANGA',
+        score: '8.7',
+        rawScore: 87,
+        popularity: 300000,
+        year: 2018,
+        rawUnits: 271,
+        units: '271 chs',
+        genres: ['Action', 'Supernatural'],
+        cover: 'https://cdn.myanimelist.net/images/manga/3/210341.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/3/210341.jpg',
+        synopsis: 'Yuji Itadori swallows a cursed talisman and becomes the vessel for Ryomen Sukuna, king of all deadly curses.'
+      },
+      {
+        id: 42451,
+        title: 'Kingdom',
+        secondaryTitle: 'Kingdom',
+        type: 'manga',
+        format: 'MANGA',
+        score: '9.0',
+        rawScore: 90,
+        popularity: 130000,
+        year: 2006,
+        rawUnits: 800,
+        units: '800+ chs',
+        genres: ['Action', 'Historical', 'Military'],
+        cover: 'https://cdn.myanimelist.net/images/manga/2/171872.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/2/171872.jpg',
+        synopsis: 'During China\'s Warring States era, an orphaned slave boy vows to become the greatest general under the heavens.'
+      },
+      {
+        id: 70345,
+        title: 'Tokyo Ghoul',
+        secondaryTitle: 'Tokyo Ghoul',
+        type: 'manga',
+        format: 'MANGA',
+        score: '8.6',
+        rawScore: 86,
+        popularity: 290000,
+        year: 2011,
+        rawUnits: 143,
+        units: '143 chs',
+        genres: ['Action', 'Horror', 'Supernatural'],
+        cover: 'https://cdn.myanimelist.net/images/manga/3/89101.jpg',
+        banner: 'https://cdn.myanimelist.net/images/manga/3/89101.jpg',
+        synopsis: 'Ken Kaneki survives a deadly encounter with a flesh-eating ghoul only to be turned into a half-ghoul hybrid.'
       }
     ];
 
@@ -915,16 +1244,16 @@
         secondaryTitle: 'Overflow',
         type: 'hentai',
         format: 'OVA',
-        score: '7.8',
-        rawScore: 78,
+        score: '7.9',
+        rawScore: 79,
         popularity: 98000,
         year: 2020,
         rawUnits: 8,
         units: '8 eps',
         genres: ['Hentai', 'Romance'],
-        cover: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'A college student encounters an unexpected dilemma when childhood friends end up sharing a bath with him, leading to forbidden intimate encounters.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1589/105436.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1589/105436.jpg',
+        synopsis: 'A male college student faces intimate complications when his two childhood sisters end up in his shared bath.'
       },
       {
         id: 107908,
@@ -939,9 +1268,9 @@
         rawUnits: 12,
         units: '12 eps',
         genres: ['Ecchi', 'Fantasy', 'Comedy'],
-        cover: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Adventurers explore and review the fantasy world red-light succubi establishments, offering in-depth comedic critiques of various mythical species.'
+        cover: 'https://cdn.myanimelist.net/images/anime/1815/103859.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/1815/103859.jpg',
+        synopsis: 'Fantasy world adventurers visit and rigorously grade the succubi establishments of diverse mythological species.'
       },
       {
         id: 869,
@@ -949,16 +1278,16 @@
         secondaryTitle: 'Bible Black: La Noche de Walpurgis',
         type: 'hentai',
         format: 'OVA',
-        score: '7.4',
-        rawScore: 74,
-        popularity: 58000,
+        score: '7.5',
+        rawScore: 75,
+        popularity: 62000,
         year: 2001,
         rawUnits: 6,
         units: '6 eps',
         genres: ['Hentai', 'Supernatural', 'Horror'],
-        cover: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'A dark grimoire found within a high school basement grants ancient witchcraft powers, plunging students into ritualistic darkness and occult lust.'
+        cover: 'https://cdn.myanimelist.net/images/anime/11/1709.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/11/1709.jpg',
+        synopsis: 'An ancient grimoire discovered in a school cellar grants terrifying occult dominion over female classmates.'
       },
       {
         id: 104276,
@@ -966,16 +1295,16 @@
         secondaryTitle: 'Kuroinu',
         type: 'hentai',
         format: 'OVA',
-        score: '7.5',
-        rawScore: 75,
-        popularity: 82000,
+        score: '7.6',
+        rawScore: 76,
+        popularity: 88000,
         year: 2012,
         rawUnits: 6,
         units: '6 eps',
         genres: ['Hentai', 'Dark Fantasy'],
-        cover: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'A dark medieval mercenary group turns against the noble knights and sanctuary guardians of the kingdom in a ruthless takeover.'
+        cover: 'https://cdn.myanimelist.net/images/anime/10/73111.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/10/73111.jpg',
+        synopsis: 'Dark mercenaries usurp the sanctuaries of noble elf paladins and sacred maidens across the fantasy kingdom.'
       },
       {
         id: 97843,
@@ -985,14 +1314,14 @@
         format: 'OVA',
         score: '8.1',
         rawScore: 81,
-        popularity: 91000,
+        popularity: 94000,
         year: 2015,
         rawUnits: 4,
         units: '4 eps',
         genres: ['Hentai', 'Romance'],
-        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Private rooms inside an eccentric manga cafe become the backdrop for clandestine romantic interactions between visitors and staff.'
+        cover: 'https://cdn.myanimelist.net/images/anime/13/74523.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/13/74523.jpg',
+        synopsis: 'Private booths inside an unconventional manga cafe become the backdrop for secretive, forbidden encounters.'
       },
       {
         id: 111192,
@@ -1002,56 +1331,118 @@
         format: 'OVA',
         score: '7.7',
         rawScore: 77,
-        popularity: 64000,
+        popularity: 67000,
         year: 2009,
         rawUnits: 3,
         units: '3 eps',
         genres: ['Hentai', 'Harem'],
-        cover: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&auto=format&fit=crop&q=80',
-        banner: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=80',
-        synopsis: 'Co-habitating with three distinct sisters sparks romantic tension and complications within a single seaside villa.'
+        cover: 'https://cdn.myanimelist.net/images/anime/7/75475.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/7/75475.jpg',
+        synopsis: 'Cohabitation with three distinct sisters at a seaside estate causes escalating romantic intrigue and competition.'
+      },
+      {
+        id: 1234,
+        title: 'Discipline: The Record of a Miracle',
+        secondaryTitle: 'Discipline',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.4',
+        rawScore: 74,
+        popularity: 51000,
+        year: 2003,
+        rawUnits: 6,
+        units: '6 eps',
+        genres: ['Hentai', 'Psychological'],
+        cover: 'https://cdn.myanimelist.net/images/anime/9/1715.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/9/1715.jpg',
+        synopsis: 'Transferring to an elite girls\' academy, a boy is introduced to a subterranean hierarchy of strict initiation.'
+      },
+      {
+        id: 1357,
+        title: 'Master Piece The Animation',
+        secondaryTitle: 'Master Piece',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.8',
+        rawScore: 78,
+        popularity: 59000,
+        year: 2013,
+        rawUnits: 2,
+        units: '2 eps',
+        genres: ['Hentai', 'Comedy'],
+        cover: 'https://cdn.myanimelist.net/images/anime/4/64789.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/4/64789.jpg',
+        synopsis: 'A private study group provides unusual extracurricular tutoring between spirited academy students.'
+      },
+      {
+        id: 2468,
+        title: 'Night Shift Nurses',
+        secondaryTitle: 'Yakin Byoutou',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.2',
+        rawScore: 72,
+        popularity: 49000,
+        year: 2000,
+        rawUnits: 10,
+        units: '10 eps',
+        genres: ['Hentai', 'Medical', 'Drama'],
+        cover: 'https://cdn.myanimelist.net/images/anime/8/74213.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/8/74213.jpg',
+        synopsis: 'A physician takes advantage of clinical surveillance and secrets inside a metropolitan hospital wing.'
+      },
+      {
+        id: 3579,
+        title: 'Resort Boin',
+        secondaryTitle: 'Resort Boin',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.5',
+        rawScore: 75,
+        popularity: 54000,
+        year: 2007,
+        rawUnits: 3,
+        units: '3 eps',
+        genres: ['Hentai', 'Ecchi', 'Comedy'],
+        cover: 'https://cdn.myanimelist.net/images/anime/11/48455.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/11/48455.jpg',
+        synopsis: 'A summer job on a secluded tropical island turns into non-stop romantic pandemonium with vacationing maidens.'
+      },
+      {
+        id: 4680,
+        title: 'Taimanin Asagi',
+        secondaryTitle: 'Taimanin Asagi',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.3',
+        rawScore: 73,
+        popularity: 61000,
+        year: 2007,
+        rawUnits: 4,
+        units: '4 eps',
+        genres: ['Hentai', 'Action', 'Sci-Fi'],
+        cover: 'https://cdn.myanimelist.net/images/anime/10/73113.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/10/73113.jpg',
+        synopsis: 'In a futuristic cyberpunk Tokyo, cybernetic ninja operatives fight demonic corporations in lethal skirmishes.'
+      },
+      {
+        id: 5791,
+        title: 'Rance: Hikari o Motomete',
+        secondaryTitle: 'Rance: The Quest for Hikari',
+        type: 'hentai',
+        format: 'OVA',
+        score: '7.7',
+        rawScore: 77,
+        popularity: 56000,
+        year: 2014,
+        rawUnits: 4,
+        units: '4 eps',
+        genres: ['Hentai', 'Action', 'Fantasy'],
+        cover: 'https://cdn.myanimelist.net/images/anime/12/61285.jpg',
+        banner: 'https://cdn.myanimelist.net/images/anime/12/61285.jpg',
+        synopsis: 'A hedonistic warrior for hire takes on dangerous bounties to conquer cities and assemble his private retinue.'
       }
     ];
-
-    const QUERY_MEDIA_FEED = `
-      query ($page: Int, $perPage: Int, $type: MediaType, $sort: [MediaSort]) {
-        Page(page: $page, perPage: $perPage) {
-          media(type: $type, sort: $sort) {
-            id
-            title { romaji english }
-            type
-            format
-            episodes
-            chapters
-            averageScore
-            popularity
-            seasonYear
-            startDate { year }
-            genres
-            bannerImage
-            description(asHtml: false)
-            coverImage { large extraLarge }
-          }
-        }
-      }
-    `;
-
-    const QUERY_ANIME_AIRING_RADAR = `
-      query {
-        Page(page: 1, perPage: 6) {
-          airingSchedules(notYetAired: true, sort: TIME) {
-            id
-            airingAt
-            episode
-            media {
-              id
-              title { english romaji }
-              coverImage { medium }
-            }
-          }
-        }
-      }
-    `;
 
     function isAgeVerified() {
       return localStorage.getItem(AGE_VERIFY_KEY) === 'true';
@@ -1069,7 +1460,7 @@
       modal.classList.add('hidden');
       modal.classList.remove('flex');
       executeSwitchCategory('hentai');
-      triggerToast('Age confirmed. Welcome to the Adult Vault.', 'fa-shield-halved text-pink-400');
+      triggerToast('Age verified. Welcome to the Adult Vault.', 'fa-shield-halved text-pink-400');
     }
 
     function declineAgeVerification() {
@@ -1091,7 +1482,6 @@
     function executeSwitchCategory(cat) {
       currentCategory = cat;
 
-      // Update Header Pill Styles
       const btnAnime = document.getElementById('tabNavAnime');
       const btnManga = document.getElementById('tabNavManga');
       const btnHentai = document.getElementById('tabNavHentai');
@@ -1129,11 +1519,10 @@
         document.getElementById('radarPanelTitle').textContent = '18+ RELEASE RADAR';
       }
 
-      // Synchronize All 4 Zones Immediately
       syncAllZones();
-      fetchFreshCategoryData();
     }
 
+    // Synchronizes Spotlight, Radar, Main Grid, and Hall of Fame
     function syncAllZones() {
       let pool = SEED_ANIME;
       if (currentCategory === 'manga') pool = SEED_MANGA;
@@ -1158,7 +1547,7 @@
       currentSpotlightItem = item;
 
       document.getElementById('spotlightTitle').textContent = item.title;
-      document.getElementById('spotlightSynopsis').textContent = item.synopsis || 'Explore full stream guides, character voice casts, and production staff.';
+      document.getElementById('spotlightSynopsis').textContent = item.synopsis || 'Explore streaming sources, voice cast, and release calendars.';
       document.getElementById('spotlightScore').innerHTML = `<i class="fa-solid fa-star text-[9px]"></i> ${item.score}`;
       document.getElementById('spotlightFormat').textContent = item.format || currentCategory.toUpperCase();
       document.getElementById('spotlightUnits').textContent = item.units;
@@ -1207,11 +1596,11 @@
       if (radarCountdownInterval) clearInterval(radarCountdownInterval);
 
       if (currentCategory === 'anime') {
-        const mockSchedules = items.slice(0, 5).map((item, idx) => ({
+        const mockSchedules = items.slice(0, 6).map((item, idx) => ({
           id: item.id,
           title: item.title,
           episode: (idx + 2),
-          airingAt: Date.now() + (idx + 1) * 3600 * 1000 * 18,
+          airingAt: Date.now() + (idx + 1) * 3600 * 1000 * 14 + (idx * 2400000),
           type: 'anime'
         }));
 
@@ -1241,7 +1630,7 @@
         startRadarTicker();
 
       } else if (currentCategory === 'manga') {
-        const mangaRadar = items.slice(0, 5);
+        const mangaRadar = items.slice(0, 6);
         radarCountHeader.textContent = `${mangaRadar.length} Tracked Manga`;
 
         container.innerHTML = mangaRadar.map(item => {
@@ -1264,7 +1653,7 @@
         }).join('');
 
       } else if (currentCategory === 'hentai') {
-        const hentaiRadar = items.slice(0, 5);
+        const hentaiRadar = items.slice(0, 6);
         radarCountHeader.textContent = `${hentaiRadar.length} Adult Titles`;
 
         container.innerHTML = hentaiRadar.map(item => {
@@ -1360,6 +1749,7 @@
         const isSaved = isWatchlistSaved(item.id, item.type);
         const entryUrl = `entry.html?id=${item.id}&type=${item.type}`;
         const primaryGenre = item.genres && item.genres[0] ? item.genres[0] : (item.type === 'hentai' ? '18+ Adult' : 'Featured');
+        const fallbackPoster = getThemedPosterFallback(item.title, item.type === 'hentai' ? '#ec4899' : '#06b6d4', item.type);
 
         return `
           <div class="media-card rounded-2xl overflow-hidden flex flex-col justify-between group relative">
@@ -1367,11 +1757,11 @@
               <div class="relative aspect-[3/4.2] overflow-hidden bg-cardBg">
                 <a href="${entryUrl}" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}'})" class="block w-full h-full">
                   <img 
-                    src="${item.cover}" 
+                    src="${item.cover || fallbackPoster}" 
                     alt="${escapeAttr(item.title)}" 
                     loading="lazy"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onerror="this.src='https://placehold.co/400x560/131926/8b949e?text=Cover+Unavailable'"
+                    onerror="this.onerror=null; this.src='${fallbackPoster}';"
                   >
                 </a>
 
@@ -1382,7 +1772,7 @@
                 </div>
 
                 <button 
-                  onclick="event.stopPropagation(); toggleWatchlist({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}', cover: '${item.cover}', score: '${item.score}', units: '${item.units}'})"
+                  onclick="event.stopPropagation(); toggleWatchlist({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}', cover: '${escapeAttr(item.cover || fallbackPoster)}', score: '${item.score}', units: '${item.units}'})"
                   class="absolute top-2 right-2 w-7 h-7 rounded-full bg-obsidian/80 hover:bg-obsidian border border-white/15 text-slate-300 hover:text-brandPink flex items-center justify-center transition-all active:scale-90"
                   title="Bookmark"
                 >
@@ -1421,11 +1811,18 @@
 
       container.innerHTML = sorted.map(item => {
         const entryUrl = `entry.html?id=${item.id}&type=${item.type}`;
+        const fallbackPoster = getThemedPosterFallback(item.title, item.type === 'hentai' ? '#ec4899' : '#f59e0b', item.type);
+
         return `
           <div class="media-card rounded-2xl overflow-hidden flex flex-col justify-between group relative">
             <div class="relative aspect-[3/4.2] overflow-hidden bg-cardBg">
               <a href="${entryUrl}" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}'})" class="block w-full h-full">
-                <img src="${item.cover}" alt="${escapeAttr(item.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <img 
+                  src="${item.cover || fallbackPoster}" 
+                  alt="${escapeAttr(item.title)}" 
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.onerror=null; this.src='${fallbackPoster}';"
+                >
               </a>
               <div class="absolute top-2 left-2 pointer-events-none">
                 <span class="bg-obsidian/85 backdrop-blur-md text-amber-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border border-white/10 flex items-center gap-1 shadow-sm">
@@ -1446,68 +1843,6 @@
       }).join('');
     }
 
-    async function fetchFreshCategoryData() {
-      if (currentCategory === 'hentai') return; // Uses isolated verified adult archive
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4500);
-      const typeParam = currentCategory === 'manga' ? 'MANGA' : 'ANIME';
-
-      try {
-        const res = await fetch(ANILIST_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            query: QUERY_MEDIA_FEED,
-            variables: { page: 1, perPage: 24, type: typeParam, sort: ['TRENDING_DESC', 'POPULARITY_DESC'] }
-          }),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        const json = await res.json();
-        const rawMedia = json.data?.Page?.media || [];
-
-        if (rawMedia.length > 0) {
-          activeFeedData = rawMedia.map(m => {
-            const year = m.seasonYear || m.startDate?.year || 2024;
-            const unitsCount = m.type === 'ANIME' 
-              ? (m.episodes ? `${m.episodes} eps` : 'Ongoing') 
-              : (m.chapters ? `${m.chapters} chs` : 'Ongoing');
-
-            return {
-              id: m.id,
-              title: m.title.english || m.title.romaji || 'Untitled Entry',
-              secondaryTitle: m.title.romaji,
-              type: currentCategory,
-              format: m.format || currentCategory.toUpperCase(),
-              score: m.averageScore ? (m.averageScore / 10).toFixed(1) : '8.0',
-              rawScore: m.averageScore || 0,
-              popularity: m.popularity || 0,
-              year: parseInt(year) || 2024,
-              rawUnits: m.episodes || m.chapters || 0,
-              units: unitsCount,
-              genres: m.genres || ['Media'],
-              cover: m.coverImage?.extraLarge || m.coverImage?.large,
-              banner: m.bannerImage || m.coverImage?.extraLarge,
-              synopsis: m.description ? m.description.replace(/<[^>]*>?/gm, '') : 'No synopsis available for this database record.'
-            };
-          });
-
-          spotlightList = activeFeedData.filter(i => i.cover).slice(0, 6);
-          if (spotlightList.length > 0) {
-            currentSpotlightIndex = 0;
-            renderSpotlight(spotlightList[0]);
-            renderSpotlightDots();
-          }
-
-          applySortAndFilter();
-        }
-      } catch (err) {
-        // Keeps immediate seed data intact on timeout or network issue
-      }
-    }
-
     let searchDebounceTimer = null;
 
     function openSearchModal() {
@@ -1524,7 +1859,7 @@
       modal.classList.remove('flex');
     }
 
-    async function executeModalSearch(term) {
+    function executeModalSearch(term) {
       const container = document.getElementById('modalSearchResultsList');
       if (!term || term.trim().length < 2) {
         container.innerHTML = '<div class="text-center py-12 text-slate-500 font-mono text-[11px]">Type at least 2 characters to search the live directory...</div>';
@@ -1559,7 +1894,7 @@
 
         container.innerHTML = matches.map(item => `
           <a href="entry.html?id=${item.id}&type=hentai" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(item.title)}', type: 'hentai'})" class="flex items-center gap-3 p-2 rounded-xl hover:bg-cardBg transition-colors group">
-            <img src="${item.cover}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10">
+            <img src="${item.cover}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10" onerror="this.src='${getThemedPosterFallback(item.title, '#ec4899', '18+')}'">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 font-mono text-[10px]">
                 <span class="text-amber-300 font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${item.score}</span>
@@ -1574,9 +1909,12 @@
         return;
       }
 
-      // Anime & Manga live search
+      // Anime & Manga local search
       const pool = scopeRadio === 'MANGA' ? SEED_MANGA : SEED_ANIME;
-      const matches = pool.filter(i => i.title.toLowerCase().includes(term.toLowerCase()));
+      const matches = pool.filter(i => 
+        i.title.toLowerCase().includes(term.toLowerCase()) ||
+        (i.secondaryTitle && i.secondaryTitle.toLowerCase().includes(term.toLowerCase()))
+      );
 
       if (matches.length === 0) {
         container.innerHTML = `<div class="text-center py-8 text-slate-400 font-mono text-xs">No entries found matching "${term}".</div>`;
@@ -1585,7 +1923,7 @@
 
       container.innerHTML = matches.map(item => `
         <a href="entry.html?id=${item.id}&type=${item.type}" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}'})" class="flex items-center gap-3 p-2 rounded-xl hover:bg-cardBg transition-colors group">
-          <img src="${item.cover}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10">
+          <img src="${item.cover}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10" onerror="this.src='${getThemedPosterFallback(item.title, '#06b6d4', item.type)}'">
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 font-mono text-[10px]">
               <span class="text-amber-300 font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${item.score}</span>
@@ -1669,7 +2007,7 @@
       container.innerHTML = items.map(item => `
         <div class="py-2.5 flex items-center justify-between gap-3">
           <a href="entry.html?id=${item.id}&type=${item.type}" class="flex items-center gap-2.5 min-w-0 flex-1 group">
-            <img src="${item.cover}" class="w-9 h-12 rounded object-cover border border-white/10 shrink-0">
+            <img src="${item.cover}" class="w-9 h-12 rounded object-cover border border-white/10 shrink-0" onerror="this.src='${getThemedPosterFallback(item.title, '#f43f5e', item.type)}'">
             <div class="min-w-0">
               <h4 class="text-white text-xs font-bold truncate group-hover:text-brandPink transition-colors">${item.title}</h4>
               <p class="text-[10px] font-mono text-slate-400 mt-0.5">${item.units || 'Ready'} • ${item.type.toUpperCase()}</p>
@@ -1722,14 +2060,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Instant Synchronous Paint
+      // 1. Synchronous Instant First Paint
       syncAllZones();
       updateLibraryUI();
 
-      // 2. Safe Background Network Sync
-      fetchFreshCategoryData();
-
-      // 3. Search and Hotkey Listeners
+      // 2. Search Hotkey Listeners (Ctrl + K / Cmd + K / ESC)
       const searchModal = document.getElementById('searchModal');
       const searchInput = document.getElementById('modalSearchInput');
 
@@ -1750,7 +2085,7 @@
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
           executeModalSearch(e.target.value);
-        }, 220);
+        }, 200);
       });
 
       document.querySelectorAll('input[name="searchScope"]').forEach(radio => {

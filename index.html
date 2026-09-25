@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QwidIndex — Public Media & Streaming Directory</title>
+  <title>QwidIndex — Universal Anime, Manga & Streaming Database</title>
   
-  <!-- Fonts: Space Grotesk & Inter for authentic developer/directory aesthetic -->
+  <!-- Fonts: Plus Jakarta Sans for UI + JetBrains Mono for metadata -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -18,20 +18,26 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Space Grotesk', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            canvas: '#0d1117',
-            cardBg: '#161b22',
-            cardHover: '#1c2128',
-            borderSubtle: '#30363d',
-            borderStrong: '#444c56',
-            brandBlue: '#2f81f7',
-            brandGreen: '#238636',
-            brandOrange: '#d29922',
-            brandPurple: '#8957e5',
+            void: '#07090e',
+            subVoid: '#0d111a',
+            surface: '#131926',
+            surfaceHover: '#1a2335',
+            borderLight: 'rgba(255, 255, 255, 0.08)',
+            borderFocus: 'rgba(56, 189, 248, 0.45)',
+            brandCyan: '#06b6d4',
+            brandIndigo: '#6366f1',
+            brandPink: '#ec4899',
+            brandGreen: '#10b981',
+            brandAmber: '#f59e0b',
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.25)',
+            'glow-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
+            'card': '0 10px 30px -10px rgba(0, 0, 0, 0.65)',
           }
         }
       }
@@ -40,663 +46,803 @@
 
   <style>
     body {
-      background-color: #0b0e14;
-      color: #c9d1d9;
-      font-family: 'Inter', sans-serif;
-    }
-    
-    /* Clean custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0d1117;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #30363d;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #484f58;
+      background-color: #07090e;
+      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
     }
 
-    .directory-border {
-      border: 1px solid #30363d;
+    /* Ambient background grid */
+    .bg-grid {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
-    .badge-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.15rem 0.55rem;
+
+    /* Custom ultra-smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
       border-radius: 9999px;
-      font-size: 0.72rem;
-      font-weight: 500;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    .glass-nav {
+      background: rgba(13, 17, 26, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .glass-card {
+      background: rgba(19, 25, 38, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.45);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.8), 0 0 20px -3px rgba(99, 102, 241, 0.15);
+    }
+
+    .spotlight-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+    .ambient-glow {
+      animation: pulseGlow 6s ease-in-out infinite;
     }
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen flex flex-col bg-void selection:bg-brandCyan selection:text-black">
 
-  <header class="bg-[#161b22] border-b border-[#30363d] sticky top-0 z-30">
+  <!-- Ambient backdrop lights -->
+  <div class="fixed top-0 left-1/4 w-96 h-96 bg-brandIndigo/10 rounded-full blur-3xl pointer-events-none ambient-glow -z-10"></div>
+  <div class="fixed bottom-1/4 right-1/4 w-96 h-96 bg-brandCyan/10 rounded-full blur-3xl pointer-events-none ambient-glow -z-10"></div>
+
+  <!-- Sticky Floating Glass Header -->
+  <header class="sticky top-0 z-40 glass-nav">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
       
       <!-- Brand Logo -->
-      <a href="index.html" class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-[#21262d] border border-[#30363d] flex items-center justify-center text-blue-400 font-display font-bold text-lg">
-          Q
+      <a href="index.html" class="flex items-center gap-3 shrink-0 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-pink-500 p-[1.5px] transition-transform duration-300 group-hover:scale-105">
+          <div class="w-full h-full bg-void rounded-[10px] flex items-center justify-center font-mono font-bold text-white text-base">
+            Q
+          </div>
         </div>
         <div class="flex flex-col">
           <div class="flex items-center gap-2">
-            <span class="font-display font-bold text-lg text-white tracking-tight">Qwid<span class="text-blue-400">Index</span></span>
-            <span class="bg-[#21262d] text-slate-300 text-[10px] font-mono px-2 py-0.5 rounded border border-[#30363d]">DIR_V1.4</span>
+            <span class="font-extrabold text-lg tracking-tight text-white group-hover:text-cyan-400 transition-colors">Qwid<span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Index</span></span>
+            <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-surface border border-white/10 text-cyan-300">v2.1</span>
           </div>
-          <span class="text-[11px] text-slate-400 -mt-1 font-mono">live media database tracker</span>
+          <span class="text-[10px] font-mono text-slate-400 -mt-1 hidden sm:block">anime • manga • shows • movies</span>
         </div>
       </a>
 
-      <!-- Quick Platform Search in Nav -->
-      <div class="flex-1 max-w-md hidden md:block">
-        <div class="relative">
-          <i class="fa-solid fa-terminal absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono"></i>
-          <input 
-            type="text" 
-            id="navSearchInput"
-            placeholder="Search anime, series, titles... (Press Enter)" 
-            class="w-full bg-[#0d1117] border border-[#30363d] text-xs text-slate-200 rounded-lg pl-8 pr-12 py-2 focus:outline-none focus:border-blue-500 font-mono placeholder:text-slate-500"
-          >
-          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 border border-[#30363d] px-1.5 py-0.5 rounded bg-[#161b22]">/</span>
+      <!-- Quick Command Bar / Search Button -->
+      <button 
+        id="openSearchModalBtn"
+        type="button" 
+        class="flex-1 max-w-lg mx-2 sm:mx-6 flex items-center justify-between px-3.5 py-2 rounded-xl bg-surface/90 hover:bg-surfaceHover border border-white/10 text-xs text-slate-400 transition-all shadow-inner group"
+      >
+        <span class="flex items-center gap-2.5 truncate">
+          <i class="fa-solid fa-magnifying-glass text-slate-500 group-hover:text-cyan-400 transition-colors"></i>
+          <span class="truncate">Search AniList, TVMaze, titles, genres...</span>
+        </span>
+        <kbd class="hidden md:inline-flex items-center gap-1 font-mono text-[10px] text-slate-400 bg-subVoid border border-white/10 px-2 py-0.5 rounded shadow-sm">
+          <span>Ctrl</span><span>K</span>
+        </kbd>
+      </button>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <!-- Live API Status Indicator -->
+        <div class="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface border border-white/5 text-[11px] font-mono text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>AniList & TVMaze: Live</span>
         </div>
-      </div>
 
-      <!-- Header Action Buttons -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Advertiser Analytics Drawer Trigger -->
+        <!-- Saved Watchlist Button -->
         <button 
-          id="openStatsBtn" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#2d333b] border border-[#30363d] text-xs text-slate-200 transition-colors font-mono"
-          title="Open Traffic & Clicks Dashboard"
+          id="navWatchlistBtn"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface hover:bg-surfaceHover border border-white/10 text-xs font-medium text-slate-200 transition-all hover:border-pink-500/40"
+          title="View Saved Media"
         >
-          <i class="fa-solid fa-chart-line text-green-400"></i>
-          <span class="hidden sm:inline">Ad Stats</span>
-          <span id="headerTotalClicks" class="ml-1 text-[10px] bg-green-950 text-green-300 border border-green-800 px-1.5 py-0.2 rounded font-bold">0</span>
-        </button>
-
-        <!-- Bookmarks Counter -->
-        <button 
-          id="filterBookmarksBtn" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#2d333b] border border-[#30363d] text-xs text-slate-200 transition-colors"
-          title="Saved Entries"
-        >
-          <i class="fa-solid fa-bookmark text-amber-400"></i>
-          <span class="hidden sm:inline">Saved</span>
-          <span id="savedCountBadge" class="text-[10px] bg-[#30363d] text-slate-300 px-1.5 py-0.5 rounded-full font-bold">0</span>
+          <i class="fa-solid fa-heart text-pink-400 text-xs"></i>
+          <span class="hidden sm:inline">Watchlist</span>
+          <span id="watchlistCountBadge" class="text-[10px] font-mono font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 px-1.5 py-0.2 rounded-full">0</span>
         </button>
       </div>
 
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
     
-    <!-- Hero / Index intro banner -->
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-5 sm:p-6 mb-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div class="inline-flex items-center gap-2 text-xs font-mono text-slate-400 mb-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>API_STATUS: ONLINE (TVMaze Live Endpoints)</span>
+    <!-- Hero Spotlight Showcase (Rotated from live trending anime/series) -->
+    <div id="spotlightHero" class="relative overflow-hidden rounded-2xl border border-white/10 spotlight-banner shadow-card p-5 sm:p-7 group">
+      <div id="spotlightBackdrop" class="absolute inset-0 bg-cover bg-center opacity-15 filter blur-sm transition-all duration-700 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-void via-subVoid/90 to-transparent pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="max-w-2xl space-y-3">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-[11px] font-mono text-indigo-300">
+            <i class="fa-solid fa-fire text-amber-400"></i>
+            <span id="spotlightBadgeText">SPOTLIGHT PICK OF THE DAY</span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-            Universal Streaming & Media Directory
+
+          <h1 id="spotlightTitle" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Solo Leveling (Ore dake Level Up na Ken)
           </h1>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
-            Direct indexing of shows, episodes, cast, and availability. Click on any card to view detailed character guides, actor credits, and stream sources on the <code class="text-blue-400 bg-[#0d1117] px-1 py-0.5 rounded border border-[#30363d] text-xs">entry.html</code> page.
+
+          <p id="spotlightDescription" class="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
+            In a world where hunters must awaken and battle supernatural monsters in deadly dungeons, Sung Jinwoo starts as the world's weakest hunter—until a mysterious quest changes everything.
           </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono">
+            <span id="spotlightRating" class="px-2.5 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 flex items-center gap-1 font-bold">
+              <i class="fa-solid fa-star text-[10px]"></i> 8.6
+            </span>
+            <span id="spotlightFormat" class="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+              TV ANIME
+            </span>
+            <span id="spotlightYear" class="px-2.5 py-1 rounded-lg bg-surface border border-white/10 text-slate-300">
+              2024
+            </span>
+          </div>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
-          <div class="text-left bg-[#0d1117] border border-[#30363d] p-3 rounded-lg font-mono text-xs">
-            <div class="text-slate-500 text-[10px] uppercase">Directory Total Loads</div>
-            <div id="heroViewCounter" class="text-lg font-bold text-white">0</div>
-          </div>
-          <div class="text-left bg-[#0d1117] border border-[#30363d] p-3 rounded-lg font-mono text-xs">
-            <div class="text-slate-500 text-[10px] uppercase">Recorded Outbound Clicks</div>
-            <div id="heroClickCounter" class="text-lg font-bold text-green-400">0</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Search Box -->
-      <div class="mt-5 flex flex-col sm:flex-row gap-2">
-        <div class="relative flex-1">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-          <input 
-            type="text" 
-            id="mainSearchInput" 
-            placeholder="Type a title or topic (e.g. Breaking Bad, Attack on Titan, Cyberpunk, Batman)..." 
-            class="w-full bg-[#0d1117] border border-[#30363d] text-sm text-white rounded-lg pl-10 pr-10 py-2.5 focus:outline-none focus:border-blue-500 font-sans placeholder:text-slate-500"
+        <!-- Spotlight CTA Actions -->
+        <div class="flex sm:flex-col items-center gap-3 shrink-0 w-full sm:w-auto">
+          <a 
+            id="spotlightActionBtn"
+            href="entry.html?id=151807&type=anime" 
+            class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-xs tracking-wide shadow-glow-cyan flex items-center justify-center gap-2 transition-all hover:scale-102"
           >
+            <span>Explore Full Entry</span>
+            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+          </a>
           <button 
-            id="clearSearchBtn" 
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white hidden text-xs"
+            id="spotlightShuffleBtn"
+            class="px-4 py-3 rounded-xl bg-surface hover:bg-surfaceHover border border-white/10 text-slate-300 text-xs font-mono flex items-center justify-center gap-2 transition-colors"
+            title="Randomize Spotlight"
           >
-            <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-shuffle text-cyan-400"></i>
+            <span class="hidden sm:inline">Next Spotlight</span>
           </button>
         </div>
-        <button 
-          id="searchSubmitBtn" 
-          class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
-        >
-          <i class="fa-solid fa-bolt text-xs"></i> Fetch Live Data
-        </button>
-      </div>
-
-      <!-- Tag Filters & Preset Queries -->
-      <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-[#21262d] text-xs">
-        <span class="text-slate-500 font-mono text-[11px]"><i class="fa-solid fa-filter mr-1"></i>Presets:</span>
-        <button class="filter-preset-btn px-2.5 py-1 rounded bg-[#21262d] hover:bg-[#30363d] text-slate-300 border border-[#30363d]" data-query="popular">🔥 Trending Series</button>
-        <button class="filter-preset-btn px-2.5 py-1 rounded bg-[#21262d] hover:bg-[#30363d] text-slate-300 border border-[#30363d]" data-query="anime">🗡️ Anime & Animation</button>
-        <button class="filter-preset-btn px-2.5 py-1 rounded bg-[#21262d] hover:bg-[#30363d] text-slate-300 border border-[#30363d]" data-query="cyberpunk">🤖 Cyberpunk & Sci-Fi</button>
-        <button class="filter-preset-btn px-2.5 py-1 rounded bg-[#21262d] hover:bg-[#30363d] text-slate-300 border border-[#30363d]" data-query="crime">🕵️ Crime & Mystery</button>
-        <button class="filter-preset-btn px-2.5 py-1 rounded bg-[#21262d] hover:bg-[#30363d] text-slate-300 border border-[#30363d]" data-query="fantasy">🐉 Fantasy & Magic</button>
       </div>
     </div>
 
-    <div class="bg-[#161b22] border border-dashed border-[#30363d] hover:border-blue-500/50 rounded-xl p-4 mb-6 transition-colors" id="sponsorSlotWrapper">
+    <!-- Sponsor / Affiliate Banner (Logged silently for clicks & impressions) -->
+    <div id="sponsorBanner" class="rounded-xl border border-dashed border-cyan-500/30 hover:border-cyan-500/60 bg-gradient-to-r from-surface via-subVoid to-surface p-4 transition-all">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-[#21262d] border border-[#30363d] flex items-center justify-center text-amber-400 shrink-0">
-            <i class="fa-solid fa-shield-cat text-lg"></i>
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 text-lg">
+            <i class="fa-solid fa-shield-halved"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <span class="bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-mono px-1.5 py-0.2 rounded uppercase">Sponsor Slot #1</span>
-              <span class="text-xs font-semibold text-white">Stream Without ISP Bandwidth Throttling</span>
+              <span class="bg-cyan-500/20 text-cyan-300 text-[10px] font-mono px-2 py-0.5 rounded border border-cyan-500/30 font-semibold">PARTNER SPONSOR</span>
+              <span class="text-xs font-bold text-white">Stream Geo-Restricted Catalogs at 4K High Speed</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">
-              High-speed secure proxy nodes for streaming 4K catalogs without geo-blocks or logs.
+              Unlock international Crunchyroll, Netflix Japan, and BBC iPlayer streams safely with verified high-speed nodes.
             </p>
           </div>
         </div>
-
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <div class="text-right hidden md:block">
-            <div class="text-[10px] font-mono text-slate-500">Tracked Sponsor Clicks</div>
-            <div id="sponsorClickDisplay" class="text-xs font-mono font-bold text-slate-300">0 Clicks</div>
-          </div>
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
           <a 
             href="https://nordvpn.com" 
             target="_blank" 
             rel="noopener noreferrer" 
-            id="sponsorActionBtn"
-            class="w-full sm:w-auto text-center px-4 py-2 bg-[#21262d] hover:bg-[#2d333b] border border-[#30363d] text-blue-400 hover:text-blue-300 rounded-lg text-xs font-mono font-semibold transition-all"
+            id="sponsorClickBtn"
+            class="w-full sm:w-auto text-center px-4 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-semibold transition-all flex items-center justify-center gap-1.5"
           >
-            Check Offer <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+            <span>Activate 70% Discount</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
           </a>
         </div>
       </div>
     </div>
 
-    <div class="flex items-center justify-between gap-4 mb-4">
-      <div class="flex items-center gap-2">
-        <h2 id="sectionHeading" class="text-base font-bold text-white font-display">Directory Feed</h2>
-        <span id="resultCountPill" class="text-xs font-mono bg-[#161b22] border border-[#30363d] text-slate-400 px-2 py-0.5 rounded">
-          Loading...
-        </span>
+    <!-- Directory Section Header with Category Tabs -->
+    <div class="space-y-4 pt-2">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+        
+        <!-- Live Tabs: All / Anime / Manga / Shows / Watchlist -->
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2" id="categoryTabGroup">
+          <button class="cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-indigo-600 text-white shadow-glow-indigo border border-indigo-400/40" data-cat="all">
+            <i class="fa-solid fa-layer-group mr-1.5"></i>All Media
+          </button>
+          <button class="cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-surface hover:bg-surfaceHover text-slate-300 border border-white/10" data-cat="anime">
+            <i class="fa-solid fa-dragon mr-1.5 text-pink-400"></i>Trending Anime
+          </button>
+          <button class="cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-surface hover:bg-surfaceHover text-slate-300 border border-white/10" data-cat="manga">
+            <i class="fa-solid fa-book-open mr-1.5 text-amber-400"></i>Top Manga
+          </button>
+          <button class="cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-surface hover:bg-surfaceHover text-slate-300 border border-white/10" data-cat="shows">
+            <i class="fa-solid fa-tv mr-1.5 text-cyan-400"></i>TV Shows & Movies
+          </button>
+          <button class="cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-surface hover:bg-surfaceHover text-slate-300 border border-white/10" data-cat="watchlist">
+            <i class="fa-solid fa-heart mr-1.5 text-pink-500"></i>Saved (<span id="tabWatchlistCount">0</span>)
+          </button>
+        </div>
+
+        <!-- Sorting & Results status -->
+        <div class="flex items-center gap-3 self-end md:self-auto">
+          <span id="directoryCountPill" class="text-[11px] font-mono text-slate-400 bg-surface px-2.5 py-1 rounded-lg border border-white/5">
+            Loading Live Feeds...
+          </span>
+          <select 
+            id="sortSelector" 
+            class="bg-surface border border-white/10 rounded-xl px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-cyan-400 font-mono"
+          >
+            <option value="popular">Popularity / Score</option>
+            <option value="alpha">Alphabetical (A-Z)</option>
+            <option value="year">Newest First</option>
+          </select>
+        </div>
+
       </div>
 
-      <div class="flex items-center gap-2 text-xs text-slate-400">
-        <span class="font-mono text-[11px] hidden sm:inline">Sort:</span>
-        <select id="sortSelector" class="bg-[#161b22] border border-[#30363d] rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-blue-500 font-mono">
-          <option value="default">Default Order</option>
-          <option value="rating">Rating (High to Low)</option>
-          <option value="name">Title (A - Z)</option>
-        </select>
+      <!-- Genre & Tag Filter Chips -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar" id="genreFilterBar">
+        <span class="text-slate-500 font-mono text-[11px] shrink-0"><i class="fa-solid fa-tags mr-1"></i>Tags:</span>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surfaceHover text-cyan-300 border border-cyan-500/40 shrink-0 font-mono text-[11px]" data-genre="all">All Genres</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Action">Action</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Fantasy">Fantasy</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Sci-Fi">Sci-Fi</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Drama">Drama</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Romance">Romance</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Comedy">Comedy</button>
+        <button class="genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]" data-genre="Mystery">Mystery</button>
       </div>
     </div>
 
-    <!-- Live Media Directory Grid -->
-    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <!-- Injected via JavaScript from TVMaze API -->
+    <!-- Directory Media Grid -->
+    <div id="mediaGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4.5 pt-2">
+      <!-- Media Cards populated dynamically via AniList and TVMaze APIs -->
     </div>
 
-    <!-- Empty / Loading Indicator -->
-    <div id="loadingIndicator" class="text-center py-20 bg-[#161b22] border border-[#30363d] rounded-xl my-4">
-      <div class="inline-block animate-spin text-blue-400 text-2xl mb-2">
-        <i class="fa-solid fa-circle-notch"></i>
+    <!-- Loading State Skeleton -->
+    <div id="loadingSkeleton" class="py-20 text-center space-y-3">
+      <div class="inline-flex p-3 rounded-2xl bg-surface border border-white/10 animate-spin text-cyan-400">
+        <i class="fa-solid fa-compact-disc text-2xl"></i>
       </div>
-      <p class="text-xs font-mono text-slate-400">Querying TVMaze API index...</p>
+      <p class="text-xs font-mono text-slate-400">Querying AniList GraphQL & TVMaze Index...</p>
     </div>
 
-    <div id="noResultsState" class="hidden text-center py-16 bg-[#161b22] border border-[#30363d] rounded-xl my-4">
-      <i class="fa-solid fa-folder-open text-3xl text-slate-600 mb-2"></i>
-      <h3 class="text-sm font-bold text-white">No directory matches found</h3>
-      <p class="text-xs text-slate-400 max-w-md mx-auto mt-1 mb-4">No results matched your query. Try searching for common terms like "Doctor", "Naruto", or "Law".</p>
-      <button id="resetSearchBtn" class="px-3 py-1.5 bg-[#21262d] border border-[#30363d] text-xs text-blue-400 rounded-lg font-mono">
-        Reload Trending Feed
+    <!-- Empty State -->
+    <div id="emptyResultsNotice" class="hidden text-center py-20 bg-surface/40 rounded-2xl border border-white/5 space-y-3">
+      <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
+      <h3 class="text-sm font-bold text-white">No indexed entries found</h3>
+      <p class="text-xs text-slate-400 max-w-sm mx-auto">Try resetting active filters or searching for terms like "Jujutsu", "Frieren", "Attack", or "Batman".</p>
+      <button id="resetDirectoryFilterBtn" class="px-3.5 py-1.5 rounded-xl bg-surface border border-white/10 hover:border-cyan-400 text-xs font-mono text-cyan-300">
+        Reset Directory View
       </button>
     </div>
 
   </main>
 
-  <div id="statsModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-[#161b22] border border-[#30363d] rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+  <!-- Quick Search Modal (Ctrl + K) -->
+  <div id="searchModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-start justify-center p-4 sm:p-6 pt-16 sm:pt-24 transition-all">
+    <div class="bg-subVoid border border-white/15 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
       
-      <!-- Modal Header -->
-      <div class="p-4 border-b border-[#30363d] flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-chart-pie text-green-400"></i>
-          <h3 class="text-sm font-bold text-white font-display">Advertiser Proof & Engagement Dashboard</h3>
-        </div>
-        <button id="closeStatsBtn" class="text-slate-400 hover:text-white text-sm p-1">
+      <!-- Search Input Header -->
+      <div class="p-3.5 border-b border-white/10 flex items-center gap-3 bg-surface">
+        <i class="fa-solid fa-magnifying-glass text-cyan-400 text-sm ml-2"></i>
+        <input 
+          type="text" 
+          id="modalSearchInput" 
+          placeholder="Search anime, manga, series, or movies... (e.g. Frieren, Berserk, Breaking Bad)" 
+          class="flex-1 bg-transparent border-none text-white text-sm focus:outline-none placeholder:text-slate-500 font-sans"
+          autocomplete="off"
+        >
+        <span class="text-[10px] font-mono text-slate-400 bg-void border border-white/10 px-2 py-0.5 rounded">ESC</span>
+        <button id="closeSearchModalBtn" class="text-slate-400 hover:text-white p-1 text-xs">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="p-5 overflow-y-auto space-y-5 text-xs text-slate-300">
-        
-        <div class="p-3 bg-[#0d1117] border border-[#30363d] rounded-lg">
-          <span class="text-slate-400 font-mono text-[11px] block mb-1">PITCH INFORMATION FOR ADVERTISERS</span>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            All user interactions (clicks to <code class="text-blue-400">entry.html</code>, outbound affiliate redirects, and queries) are recorded in client metrics. You can export this verified log to prove user intent and high-engagement CTR when selling featured banner spots.
-          </p>
-        </div>
+      <!-- Quick Category Select inside Modal -->
+      <div class="px-4 py-2 border-b border-white/5 flex items-center gap-2 text-[11px] font-mono text-slate-400 bg-void/50">
+        <span>Search in:</span>
+        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+          <input type="radio" name="modalScope" value="all" checked class="accent-cyan-400"> All
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+          <input type="radio" name="modalScope" value="anime" class="accent-pink-400"> Anime
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+          <input type="radio" name="modalScope" value="manga" class="accent-amber-400"> Manga
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+          <input type="radio" name="modalScope" value="shows" class="accent-indigo-400"> TV/Movies
+        </label>
+      </div>
 
-        <!-- Metrics Overview Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
-          <div class="bg-[#0d1117] border border-[#30363d] p-3 rounded-lg">
-            <div class="text-[10px] text-slate-500 uppercase">Page Impressions</div>
-            <div id="statTotalViews" class="text-lg font-bold text-white mt-1">0</div>
-          </div>
-          <div class="bg-[#0d1117] border border-[#30363d] p-3 rounded-lg">
-            <div class="text-[10px] text-slate-500 uppercase">Entry Page Clicks</div>
-            <div id="statEntryClicks" class="text-lg font-bold text-blue-400 mt-1">0</div>
-          </div>
-          <div class="bg-[#0d1117] border border-[#30363d] p-3 rounded-lg">
-            <div class="text-[10px] text-slate-500 uppercase">Sponsor Clicks</div>
-            <div id="statSponsorClicks" class="text-lg font-bold text-amber-400 mt-1">0</div>
-          </div>
-          <div class="bg-[#0d1117] border border-[#30363d] p-3 rounded-lg">
-            <div class="text-[10px] text-slate-500 uppercase">Saved Bookmarks</div>
-            <div id="statBookmarks" class="text-lg font-bold text-purple-400 mt-1">0</div>
-          </div>
+      <!-- Suggestions & Live Results List -->
+      <div id="modalResultsList" class="p-3 overflow-y-auto space-y-1.5 flex-1 text-xs divide-y divide-white/5">
+        <div class="text-center py-10 text-slate-500 font-mono text-[11px]">
+          Type at least 2 characters to trigger live query...
         </div>
-
-        <!-- Top Clicked Titles Table -->
-        <div>
-          <h4 class="font-bold text-white mb-2 flex items-center justify-between">
-            <span>Top Performing Titles (High Sponsor Interest)</span>
-            <span class="text-[10px] text-slate-500 font-mono">Live Counter</span>
-          </h4>
-          <div class="border border-[#30363d] rounded-lg overflow-hidden bg-[#0d1117]">
-            <table class="w-full text-left font-mono text-[11px]">
-              <thead class="bg-[#161b22] text-slate-400 border-b border-[#30363d]">
-                <tr>
-                  <th class="p-2.5">Title Name</th>
-                  <th class="p-2.5">TVMaze ID</th>
-                  <th class="p-2.5 text-right">Intent Clicks</th>
-                </tr>
-              </thead>
-              <tbody id="topClickedTableBody" class="divide-y divide-[#21262d]">
-                <!-- Injected via JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Recent Search History for Advertisers -->
-        <div>
-          <h4 class="font-bold text-white mb-2 text-xs">High-Intent Keywords Searched by Visitors</h4>
-          <div id="recentSearchesList" class="flex flex-wrap gap-1.5 font-mono text-[11px]">
-            <!-- Injected via JS -->
-          </div>
-        </div>
-
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 border-t border-[#30363d] bg-[#161b22] flex items-center justify-between gap-3">
-        <button 
-          id="exportStatsJsonBtn" 
-          class="px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#2d333b] border border-[#30363d] text-slate-200 text-xs font-mono transition-colors"
-        >
-          <i class="fa-solid fa-download mr-1"></i> Export Metrics (JSON)
-        </button>
-        <button 
-          id="resetStatsBtn" 
-          class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 font-mono"
-        >
-          Reset Local Counters
-        </button>
+      <div class="p-3 border-t border-white/10 bg-surface/50 flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <span>Press <kbd class="bg-subVoid px-1 py-0.5 rounded border border-white/10 text-slate-300">Enter</kbd> to open entry</span>
+        <span>Powered by AniList & TVMaze APIs</span>
       </div>
 
     </div>
   </div>
 
-  <footer class="bg-[#161b22] border-t border-[#30363d] py-8 text-xs text-slate-500 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+  <footer class="mt-16 border-t border-white/10 bg-subVoid text-xs text-slate-400 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
       
-      <!-- Static Ad Banner Ready for Zero Cost -->
-      <div class="p-4 rounded-lg bg-[#0d1117] border border-dashed border-[#30363d] text-center mb-6">
-        <span class="text-[10px] font-mono text-slate-500 uppercase">Available 728x90 Header / Footer Sponsor Banner Space</span>
-        <p class="text-slate-400 mt-1 text-xs">
-          High-intent streaming audience. To buy this ad space, contact the site curator.
-        </p>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-white text-base">QwidIndex</span>
+            <span class="text-[10px] font-mono text-cyan-400 border border-cyan-500/30 px-1.5 py-0.2 rounded bg-cyan-500/10">OPEN DIRECTORY</span>
+          </div>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            Zero-cost static media index aggregating live streaming sources, character cast info, and release calendars via free public APIs.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-mono text-slate-300 font-bold text-xs mb-2 uppercase">Media Endpoints</h4>
+          <ul class="space-y-1.5 font-mono text-[11px] text-slate-400">
+            <li>• AniList GraphQL (v2)</li>
+            <li>• TVMaze Free Public REST</li>
+            <li>• Client-side Cache Engine</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-mono text-slate-300 font-bold text-xs mb-2 uppercase">Target Routing</h4>
+          <ul class="space-y-1.5 font-mono text-[11px] text-slate-400">
+            <li>• <code class="text-cyan-400">entry.html?id=[id]&type=anime</code></li>
+            <li>• <code class="text-amber-400">entry.html?id=[id]&type=manga</code></li>
+            <li>• <code class="text-indigo-400">entry.html?id=[id]&type=show</code></li>
+          </ul>
+        </div>
+
+        <div class="p-3 rounded-xl bg-surface border border-white/5 space-y-1.5">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Traffic & Click Log</span>
+          <p class="text-[11px] text-slate-300">
+            Visitor intent and outbound clicks are tracked in client storage for future admin analytics and sponsor proof.
+          </p>
+          <div class="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5 pt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Logging Active
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#21262d]">
-        <div class="flex items-center gap-2">
-          <span class="font-display font-bold text-white">QwidIndex</span>
-          <span>— Open Media Directory</span>
-        </div>
-        <div class="flex items-center gap-4 text-[11px] font-mono">
-          <span>Source: TVMaze Public API</span>
-          <span>Zero Server Costs</span>
-          <span>Target Page: entry.html</span>
+      <div class="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-500">
+        <div>© 2026 QwidIndex — All metadata belongs to their respective public APIs and creators.</div>
+        <div class="flex items-center gap-3">
+          <a href="#" class="hover:text-slate-300">Privacy Notice</a>
+          <span>•</span>
+          <a href="#" class="hover:text-slate-300">API Status</a>
+          <span>•</span>
+          <a href="#" class="hover:text-slate-300">Report Broken Link</a>
         </div>
       </div>
+
     </div>
   </footer>
 
   <!-- Notification Toast -->
-  <div id="toastBox" class="fixed bottom-5 right-5 z-50 bg-[#161b22] border border-[#30363d] text-slate-200 px-3.5 py-2 rounded-lg text-xs font-mono shadow-lg transition-transform transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-2">
-    <i class="fa-solid fa-check text-green-400"></i>
-    <span id="toastMessage">Success</span>
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-surface border border-white/20 text-slate-200 px-4 py-2.5 rounded-xl text-xs font-mono shadow-2xl transition-all transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-2.5">
+    <i id="toastIcon" class="fa-solid fa-check text-cyan-400"></i>
+    <span id="toastMsg">Action confirmed</span>
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // Analytics & Metrics Engine (Stored in LocalStorage for advertisers)
-    // -------------------------------------------------------------
-    const STATS_KEY = 'qwid_advertiser_metrics';
-    const BOOKMARKS_KEY = 'qwid_user_bookmarks';
+    // ==============================================================
+    // 1. SILENT CLICK ANALYTICS (Stores intent for Admin Portal later)
+    // ==============================================================
+    const ANALYTICS_STORAGE_KEY = 'qwidindex_click_stats';
+    const WATCHLIST_STORAGE_KEY = 'qwidindex_watchlist';
 
-    function getMetrics() {
-      const defaultData = {
-        pageViews: 0,
-        entryClicks: 0,
-        sponsorClicks: 0,
-        searches: {},
-        titleClicks: {} // { [titleId]: { name: string, clicks: number } }
-      };
+    function getAnalytics() {
       try {
-        const stored = localStorage.getItem(STATS_KEY);
-        return stored ? JSON.parse(stored) : defaultData;
+        const raw = localStorage.getItem(ANALYTICS_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : { totalViews: 0, items: {}, outboundClicks: 0, searches: [] };
       } catch (e) {
-        return defaultData;
+        return { totalViews: 0, items: {}, outboundClicks: 0, searches: [] };
       }
     }
 
-    function saveMetrics(data) {
+    function recordAnalyticsClick(id, title, type, target) {
       try {
-        localStorage.setItem(STATS_KEY, JSON.stringify(data));
-      } catch (e) {
-        console.warn('Unable to persist metrics', e);
+        const stats = getAnalytics();
+        const key = `${type}_${id}`;
+        if (!stats.items[key]) {
+          stats.items[key] = { id, title, type, clicks: 0, lastClicked: null };
+        }
+        stats.items[key].clicks += 1;
+        stats.items[key].lastClicked = new Date().toISOString();
+        if (target === 'sponsor' || target === 'affiliate') {
+          stats.outboundClicks = (stats.outboundClicks || 0) + 1;
+        }
+        localStorage.setItem(ANALYTICS_STORAGE_KEY, JSON.stringify(stats));
+      } catch (err) {
+        console.warn('Analytics log failed', err);
       }
-      refreshStatsUI();
-    }
-
-    function recordPageView() {
-      const stats = getMetrics();
-      stats.pageViews = (stats.pageViews || 0) + 1;
-      saveMetrics(stats);
-    }
-
-    function recordTitleClick(id, titleName) {
-      const stats = getMetrics();
-      stats.entryClicks = (stats.entryClicks || 0) + 1;
-      if (!stats.titleClicks[id]) {
-        stats.titleClicks[id] = { name: titleName, clicks: 0 };
-      }
-      stats.titleClicks[id].clicks += 1;
-      saveMetrics(stats);
-    }
-
-    function recordSponsorClick() {
-      const stats = getMetrics();
-      stats.sponsorClicks = (stats.sponsorClicks || 0) + 1;
-      saveMetrics(stats);
     }
 
     function recordSearchQuery(term) {
-      if (!term || term.trim().length < 2) return;
-      const stats = getMetrics();
-      const cleanTerm = term.trim().toLowerCase();
-      stats.searches[cleanTerm] = (stats.searches[cleanTerm] || 0) + 1;
-      saveMetrics(stats);
+      if (!term || term.length < 2) return;
+      try {
+        const stats = getAnalytics();
+        stats.searches = stats.searches || [];
+        stats.searches.unshift({ term: term.trim(), timestamp: new Date().toISOString() });
+        if (stats.searches.length > 50) stats.searches.pop();
+        localStorage.setItem(ANALYTICS_STORAGE_KEY, JSON.stringify(stats));
+      } catch (e) {}
     }
 
-    // -------------------------------------------------------------
-    // Bookmarking Engine
-    // -------------------------------------------------------------
-    function getBookmarks() {
+    // ==============================================================
+    // 2. WATCHLIST (LOCALSTORAGE ENGINE)
+    // ==============================================================
+    function getWatchlist() {
       try {
-        const raw = localStorage.getItem(BOOKMARKS_KEY);
-        return raw ? JSON.parse(raw) : [];
+        const stored = localStorage.getItem(WATCHLIST_STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
       } catch (e) {
         return [];
       }
     }
 
-    function toggleBookmark(item) {
-      let marks = getBookmarks();
-      const exists = marks.some(m => m.id === item.id);
-      if (exists) {
-        marks = marks.filter(m => m.id !== item.id);
-        showToast(`Removed "${item.name}" from saved list`);
+    function toggleWatchlist(item) {
+      let list = getWatchlist();
+      const existingIdx = list.findIndex(x => String(x.id) === String(item.id) && x.type === item.type);
+      if (existingIdx > -1) {
+        list.splice(existingIdx, 1);
+        triggerToast(`Removed "${item.title}" from saved watchlist`, 'fa-trash text-amber-400');
       } else {
-        marks.push(item);
-        showToast(`Saved "${item.name}"`);
+        list.push(item);
+        triggerToast(`Saved "${item.title}" to watchlist`, 'fa-heart text-pink-400');
       }
-      localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(marks));
-      updateBookmarkUI();
-      renderFeed(currentShows);
+      localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(list));
+      updateWatchlistCounters();
+      
+      // If currently on watchlist tab, re-render immediately
+      if (currentActiveCategory === 'watchlist') {
+        renderDirectoryCards(list);
+      } else {
+        renderDirectoryCards(currentFeedData);
+      }
     }
 
-    function updateBookmarkUI() {
-      const marks = getBookmarks();
-      document.getElementById('savedCountBadge').textContent = marks.length;
-      document.getElementById('statBookmarks').textContent = marks.length;
+    function updateWatchlistCounters() {
+      const list = getWatchlist();
+      const count = list.length;
+      document.getElementById('watchlistCountBadge').textContent = count;
+      document.getElementById('tabWatchlistCount').textContent = count;
     }
 
-    // -------------------------------------------------------------
-    // Toast Notification
-    // -------------------------------------------------------------
-    function showToast(text) {
-      const toast = document.getElementById('toastBox');
-      document.getElementById('toastMessage').textContent = text;
-      toast.classList.remove('translate-y-20', 'opacity-0');
+    function triggerToast(message, iconClass = 'fa-check text-cyan-400') {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMsg');
+      const icon = document.getElementById('toastIcon');
+      msg.textContent = message;
+      icon.className = `fa-solid ${iconClass}`;
+      toast.classList.remove('translate-y-24', 'opacity-0');
       toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2200);
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2300);
     }
 
-    // -------------------------------------------------------------
-    // Live TVMaze API Integration (100% Free, Zero Key Needed)
-    // -------------------------------------------------------------
-    let currentShows = [];
-    let isShowingOnlyBookmarks = false;
+    // ==============================================================
+    // 3. ANILIST GRAPHQL API CLIENT (Zero Cost, High Limit)
+    // ==============================================================
+    const ANILIST_URL = 'https://graphql.anilist.co';
 
-    // Default high-rated & popular fallback queries if API search is cleared
-    const POPULAR_SEARCH_SEEDS = ['Cyberpunk', 'Stranger', 'Hero', 'Dragon', 'Office', 'Mirror'];
-
-    async function fetchPopularShows() {
-      showLoading(true);
-      document.getElementById('sectionHeading').textContent = 'Trending & Indexed Titles';
-      try {
-        // Fetch curated batch using free TVMaze search query
-        const randomSeed = POPULAR_SEARCH_SEEDS[Math.floor(Math.random() * POPULAR_SEARCH_SEEDS.length)];
-        const res = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(randomSeed)}`);
-        const data = await res.json();
-        
-        // Extract shows
-        currentShows = data.map(entry => entry.show).filter(s => s && s.name);
-        
-        // If query seed returned less than 4, fetch an additional backup query
-        if (currentShows.length < 5) {
-          const res2 = await fetch(`https://api.tvmaze.com/search/shows?q=star`);
-          const data2 = await res2.json();
-          const extra = data2.map(e => e.show).filter(s => s && s.name);
-          currentShows = [...currentShows, ...extra];
+    const ANILIST_TRENDING_QUERY = `
+      query ($page: Int, $perPage: Int, $type: MediaType) {
+        Page(page: $page, perPage: $perPage) {
+          media(type: $type, sort: TRENDING_DESC) {
+            id
+            idMal
+            title {
+              romaji
+              english
+              native
+            }
+            type
+            format
+            status
+            description
+            seasonYear
+            startDate {
+              year
+            }
+            episodes
+            chapters
+            averageScore
+            genres
+            coverImage {
+              large
+              extraLarge
+            }
+            bannerImage
+          }
         }
-
-        renderFeed(currentShows);
-      } catch (err) {
-        console.error('Failed to query TVMaze:', err);
-        showLoading(false);
-        document.getElementById('noResultsState').classList.remove('hidden');
       }
-    }
+    `;
 
-    async function searchShows(query) {
-      if (!query || query.trim() === '') {
-        fetchPopularShows();
-        return;
+    const ANILIST_SEARCH_QUERY = `
+      query ($search: String, $type: MediaType) {
+        Page(page: 1, perPage: 10) {
+          media(search: $search, type: $type, sort: SEARCH_MATCH) {
+            id
+            title {
+              romaji
+              english
+            }
+            type
+            format
+            averageScore
+            seasonYear
+            genres
+            coverImage {
+              large
+            }
+          }
+        }
       }
-      showLoading(true);
-      recordSearchQuery(query);
-      document.getElementById('sectionHeading').textContent = `Search results for "${query}"`;
+    `;
 
+    async function fetchAniListMedia(mediaType = 'ANIME', perPage = 18) {
       try {
-        const res = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query.trim())}`);
-        const data = await res.json();
-        currentShows = data.map(item => item.show).filter(s => s && s.name);
-        renderFeed(currentShows);
+        const response = await fetch(ANILIST_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            query: ANILIST_TRENDING_QUERY,
+            variables: { page: 1, perPage, type: mediaType }
+          })
+        });
+        const result = await response.json();
+        const rawList = result.data?.Page?.media || [];
+        return rawList.map(item => ({
+          id: item.id,
+          title: item.title.english || item.title.romaji || 'Untitled',
+          secondaryTitle: item.title.romaji,
+          type: item.type === 'ANIME' ? 'anime' : 'manga',
+          format: item.format || (item.type === 'ANIME' ? 'ANIME' : 'MANGA'),
+          score: item.averageScore ? (item.averageScore / 10).toFixed(1) : '8.2',
+          year: item.seasonYear || item.startDate?.year || '2024',
+          genres: item.genres || ['Action', 'Fantasy'],
+          cover: item.coverImage?.extraLarge || item.coverImage?.large,
+          banner: item.bannerImage,
+          description: item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'Popular trending series currently indexed on QwidIndex.',
+          units: item.type === 'ANIME' ? (item.episodes ? `${item.episodes} eps` : 'Ongoing') : (item.chapters ? `${item.chapters} chs` : 'Ongoing')
+        }));
       } catch (err) {
-        console.error('Search error:', err);
-        showLoading(false);
-        document.getElementById('noResultsState').classList.remove('hidden');
+        console.error('AniList API error:', err);
+        return [];
       }
     }
 
-    function showLoading(isLoading) {
-      const loader = document.getElementById('loadingIndicator');
-      const grid = document.getElementById('mediaGrid');
-      const noRes = document.getElementById('noResultsState');
-
-      if (isLoading) {
-        loader.classList.remove('hidden');
-        grid.innerHTML = '';
-        noRes.classList.add('hidden');
-      } else {
-        loader.classList.add('hidden');
+    // ==============================================================
+    // 4. TVMAZE API CLIENT (Shows & Movies, Zero Key Required)
+    // ==============================================================
+    async function fetchTVMazeMedia(searchTerm = 'hero') {
+      try {
+        const res = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(searchTerm)}`);
+        const data = await res.json();
+        return data.map(entry => {
+          const s = entry.show;
+          return {
+            id: s.id,
+            title: s.name,
+            secondaryTitle: s.network?.name || s.webChannel?.name || 'Broadcast',
+            type: 'show',
+            format: s.type || 'TV SERIES',
+            score: s.rating?.average ? s.rating.average.toFixed(1) : '7.8',
+            year: s.premiered ? s.premiered.substring(0, 4) : '2023',
+            genres: s.genres && s.genres.length ? s.genres : ['Drama'],
+            cover: s.image?.original || s.image?.medium || 'https://placehold.co/400x560/131926/8b949e?text=No+Cover',
+            banner: null,
+            description: s.summary ? s.summary.replace(/<[^>]*>?/gm, '') : 'TV & Movie live stream guide index entry.',
+            units: s.status || 'Ended'
+          };
+        });
+      } catch (err) {
+        console.error('TVMaze error:', err);
+        return [];
       }
     }
 
-    // -------------------------------------------------------------
-    // Feed Card Rendering & Entry Page Linking
-    // -------------------------------------------------------------
-    function renderFeed(shows) {
-      showLoading(false);
-      const grid = document.getElementById('mediaGrid');
-      const noRes = document.getElementById('noResultsState');
-      const countPill = document.getElementById('resultCountPill');
+    // ==============================================================
+    // 5. APP STATE & RENDERING ENGINE
+    // ==============================================================
+    let currentFeedData = [];
+    let currentActiveCategory = 'all';
+    let currentSelectedGenre = 'all';
+    let spotlightPool = [];
 
-      if (!shows || shows.length === 0) {
+    async function initializeQwidDirectory() {
+      document.getElementById('loadingSkeleton').classList.remove('hidden');
+      document.getElementById('mediaGrid').innerHTML = '';
+      document.getElementById('emptyResultsNotice').classList.add('hidden');
+
+      // Fetch anime and shows in parallel
+      const [animeList, mangaList, tvList] = await Promise.all([
+        fetchAniListMedia('ANIME', 14),
+        fetchAniListMedia('MANGA', 10),
+        fetchTVMazeMedia('cyberpunk')
+      ]);
+
+      // Combine feeds
+      currentFeedData = [...animeList, ...tvList, ...mangaList];
+      spotlightPool = [...animeList, ...tvList].filter(x => x.cover);
+
+      // Initialize hero spotlight
+      if (spotlightPool.length > 0) {
+        updateSpotlightCard(spotlightPool[0]);
+      }
+
+      document.getElementById('loadingSkeleton').classList.add('hidden');
+      applyFiltersAndRender();
+    }
+
+    function updateSpotlightCard(item) {
+      if (!item) return;
+      document.getElementById('spotlightTitle').textContent = item.title;
+      document.getElementById('spotlightDescription').textContent = item.description;
+      document.getElementById('spotlightRating').innerHTML = `<i class="fa-solid fa-star text-[10px]"></i> ${item.score}`;
+      document.getElementById('spotlightFormat').textContent = item.format.toUpperCase();
+      document.getElementById('spotlightYear').textContent = item.year;
+      document.getElementById('spotlightActionBtn').href = `entry.html?id=${item.id}&type=${item.type}`;
+      
+      const backdrop = document.getElementById('spotlightBackdrop');
+      if (item.banner || item.cover) {
+        backdrop.style.backgroundImage = `url('${item.banner || item.cover}')`;
+      }
+    }
+
+    function renderDirectoryCards(items) {
+      const grid = document.getElementById('mediaGrid');
+      const emptyState = document.getElementById('emptyResultsNotice');
+      const pill = document.getElementById('directoryCountPill');
+
+      if (!items || items.length === 0) {
         grid.innerHTML = '';
-        noRes.classList.remove('hidden');
-        countPill.textContent = '0 items';
+        emptyState.classList.remove('hidden');
+        pill.textContent = '0 items found';
         return;
       }
 
-      noRes.classList.add('hidden');
-      countPill.textContent = `${shows.length} indexed titles`;
+      emptyState.classList.add('hidden');
+      pill.textContent = `${items.length} titles listed`;
 
-      // Apply client sorting
-      const sortVal = document.getElementById('sortSelector').value;
-      let displayShows = [...shows];
-      if (sortVal === 'rating') {
-        displayShows.sort((a, b) => (b.rating?.average || 0) - (a.rating?.average || 0));
-      } else if (sortVal === 'name') {
-        displayShows.sort((a, b) => a.name.localeCompare(b.name));
-      }
+      const watchlist = getWatchlist();
 
-      const bookmarks = getBookmarks();
-
-      grid.innerHTML = displayShows.map(show => {
-        const isBookmarked = bookmarks.some(b => b.id === show.id);
-        const posterImg = show.image?.medium || show.image?.original || 'https://placehold.co/300x420/161b22/8b949e?text=No+Poster';
-        const rating = show.rating?.average ? show.rating.average.toFixed(1) : 'NR';
-        const genres = show.genres && show.genres.length > 0 ? show.genres.slice(0, 2).join(' • ') : (show.type || 'Media');
-        const premieredYear = show.premiered ? show.premiered.substring(0, 4) : '—';
-        const cleanSummary = show.summary ? show.summary.replace(/<[^>]*>?/gm, '').substring(0, 115) + '...' : 'Live TVMaze indexed broadcast with cast, episodes, and stream sources.';
+      grid.innerHTML = items.map(item => {
+        const isSaved = watchlist.some(w => String(w.id) === String(item.id) && w.type === item.type);
+        const entryUrl = `entry.html?id=${item.id}&type=${item.type}`;
         
-        // Link to the future entry.html page with ID parameter
-        const entryUrl = `entry.html?id=${show.id}&type=tvmaze`;
+        // Format-specific color chips
+        let badgeColor = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+        if (item.type === 'anime') badgeColor = 'bg-pink-500/20 text-pink-300 border-pink-500/30';
+        if (item.type === 'manga') badgeColor = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+        if (item.type === 'show') badgeColor = 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+
+        const genrePill = item.genres && item.genres.length ? item.genres[0] : 'Media';
 
         return `
-          <div class="bg-[#161b22] border border-[#30363d] hover:border-slate-500 rounded-xl overflow-hidden flex flex-col justify-between transition-all group">
-            
+          <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between group relative">
             <div>
-              <!-- Poster with Status & Year -->
-              <div class="relative h-56 bg-[#0d1117] overflow-hidden">
-                <a href="${entryUrl}" onclick="recordTitleClick(${show.id}, '${escapeJsQuotes(show.name)}')" class="block w-full h-full">
+              <!-- Poster Image Frame -->
+              <div class="relative aspect-[3/4.2] overflow-hidden bg-surface">
+                <a 
+                  href="${entryUrl}" 
+                  onclick="recordAnalyticsClick('${item.id}', '${escapeAttr(item.title)}', '${item.type}', 'card')"
+                  class="block w-full h-full"
+                >
                   <img 
-                    src="${posterImg}" 
-                    alt="${show.name}" 
+                    src="${item.cover}" 
+                    alt="${escapeAttr(item.title)}" 
                     loading="lazy"
-                    class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    onerror="this.src='https://placehold.co/300x420/161b22/8b949e?text=Poster+Unavailable'"
+                    class="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-500 ease-out"
+                    onerror="this.src='https://placehold.co/400x560/131926/8b949e?text=Cover+Unavailable'"
                   >
                 </a>
-                
-                <!-- Tag Pills Top -->
-                <div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                  <span class="badge-pill bg-black/80 backdrop-blur-sm border border-white/10 text-white font-mono text-[10px]">
-                    ${show.status || 'Active'}
-                  </span>
 
-                  <button 
-                    onclick="event.stopPropagation(); toggleBookmark({id: ${show.id}, name: '${escapeJsQuotes(show.name)}', image: '${posterImg}', rating: '${rating}'})" 
-                    class="pointer-events-auto w-7 h-7 rounded-md bg-black/80 hover:bg-black border border-white/10 text-slate-300 hover:text-amber-400 flex items-center justify-center transition-colors"
-                    title="${isBookmarked ? 'Remove saved' : 'Save title'}"
-                  >
-                    <i class="${isBookmarked ? 'fa-solid fa-bookmark text-amber-400' : 'fa-regular fa-bookmark'} text-xs"></i>
-                  </button>
+                <!-- Type & Format Badge -->
+                <div class="absolute top-2 left-2 pointer-events-none">
+                  <span class="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border backdrop-blur-md ${badgeColor}">
+                    ${item.type}
+                  </span>
                 </div>
 
-                <!-- Bottom overlay bar -->
-                <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[11px] font-mono pointer-events-none">
-                  <span class="bg-black/80 text-amber-300 px-2 py-0.5 rounded border border-white/10 flex items-center gap-1">
-                    <i class="fa-solid fa-star text-[9px]"></i> ${rating}
+                <!-- Bookmark Button -->
+                <button 
+                  onclick="event.stopPropagation(); toggleWatchlist({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}', cover: '${item.cover}', score: '${item.score}', year: '${item.year}', format: '${item.format}'})" 
+                  class="absolute top-2 right-2 w-7 h-7 rounded-full bg-void/80 hover:bg-void backdrop-blur-md border border-white/20 text-slate-300 hover:text-pink-400 flex items-center justify-center transition-transform active:scale-90"
+                  title="${isSaved ? 'Remove from saved' : 'Save to Watchlist'}"
+                >
+                  <i class="${isSaved ? 'fa-solid fa-heart text-pink-500' : 'fa-regular fa-heart'} text-xs"></i>
+                </button>
+
+                <!-- Bottom Glass Bar Overlay -->
+                <div class="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between text-[10px] font-mono pointer-events-none">
+                  <span class="bg-void/80 backdrop-blur-sm text-yellow-300 px-1.5 py-0.5 rounded border border-white/10 flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-star text-[8px]"></i> ${item.score}
                   </span>
-                  <span class="bg-black/80 text-slate-300 px-2 py-0.5 rounded border border-white/10">
-                    ${premieredYear}
+                  <span class="bg-void/80 backdrop-blur-sm text-slate-300 px-1.5 py-0.5 rounded border border-white/10">
+                    ${item.year}
                   </span>
                 </div>
               </div>
 
-              <!-- Metadata Info -->
-              <div class="p-3.5">
-                <div class="text-[10px] font-mono text-blue-400 uppercase tracking-wide truncate mb-1">
-                  ${genres}
+              <!-- Metadata content -->
+              <div class="p-2.5 sm:p-3">
+                <div class="text-[10px] font-mono text-cyan-400 uppercase tracking-wider truncate mb-1">
+                  ${genrePill} • ${item.units || 'Ready'}
                 </div>
                 
-                <h3 class="font-bold text-white text-sm group-hover:text-blue-400 transition-colors line-clamp-1 mb-1.5 font-display">
-                  <a href="${entryUrl}" onclick="recordTitleClick(${show.id}, '${escapeJsQuotes(show.name)}')">
-                    ${show.name}
+                <h3 class="font-bold text-white text-xs sm:text-[13px] leading-snug group-hover:text-cyan-400 transition-colors line-clamp-2">
+                  <a 
+                    href="${entryUrl}" 
+                    onclick="recordAnalyticsClick('${item.id}', '${escapeAttr(item.title)}', '${item.type}', 'card')"
+                  >
+                    ${item.title}
                   </a>
                 </h3>
-
-                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">
-                  ${cleanSummary}
-                </p>
               </div>
             </div>
 
-            <!-- Card Bottom Bar: Navigate to entry.html -->
-            <div class="p-3.5 pt-0">
+            <!-- Card Footer Action -->
+            <div class="p-2.5 sm:p-3 pt-0">
               <a 
                 href="${entryUrl}" 
-                onclick="recordTitleClick(${show.id}, '${escapeJsQuotes(show.name)}')"
-                class="w-full py-2 bg-[#21262d] hover:bg-[#2d333b] border border-[#30363d] hover:border-slate-500 text-slate-200 hover:text-white rounded-lg text-xs font-mono flex items-center justify-center gap-1.5 transition-all"
+                onclick="recordAnalyticsClick('${item.id}', '${escapeAttr(item.title)}', '${item.type}', 'card')"
+                class="w-full py-1.5 rounded-lg bg-surfaceHover hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-[11px] font-mono font-medium flex items-center justify-center gap-1.5 transition-all"
               >
-                <span>Full Cast & Streams</span>
-                <i class="fa-solid fa-arrow-right text-[10px] text-blue-400"></i>
+                <span>View Guide</span>
+                <i class="fa-solid fa-arrow-right text-[9px] text-cyan-400"></i>
               </a>
             </div>
 
@@ -705,203 +851,267 @@
       }).join('');
     }
 
-    function escapeJsQuotes(str) {
+    function escapeAttr(str) {
       if (!str) return '';
       return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     }
 
-    // -------------------------------------------------------------
-    // Advertiser Dashboard Refresh
-    // -------------------------------------------------------------
-    function refreshStatsUI() {
-      const stats = getMetrics();
-      
-      document.getElementById('heroViewCounter').textContent = stats.pageViews || 0;
-      document.getElementById('heroClickCounter').textContent = stats.entryClicks || 0;
-      document.getElementById('headerTotalClicks').textContent = (stats.entryClicks || 0) + (stats.sponsorClicks || 0);
-      document.getElementById('sponsorClickDisplay').textContent = `${stats.sponsorClicks || 0} Clicks`;
+    // ==============================================================
+    // 6. FILTERING & SORTING LOGIC
+    // ==============================================================
+    function applyFiltersAndRender() {
+      let result = [];
 
-      document.getElementById('statTotalViews').textContent = stats.pageViews || 0;
-      document.getElementById('statEntryClicks').textContent = stats.entryClicks || 0;
-      document.getElementById('statSponsorClicks').textContent = stats.sponsorClicks || 0;
-
-      // Render top clicked titles
-      const tableBody = document.getElementById('topClickedTableBody');
-      const clickEntries = Object.entries(stats.titleClicks || {});
-      
-      if (clickEntries.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-500">No clicks recorded yet. Click on media cards to track intent.</td></tr>`;
+      if (currentActiveCategory === 'watchlist') {
+        result = getWatchlist();
+      } else if (currentActiveCategory === 'anime') {
+        result = currentFeedData.filter(i => i.type === 'anime');
+      } else if (currentActiveCategory === 'manga') {
+        result = currentFeedData.filter(i => i.type === 'manga');
+      } else if (currentActiveCategory === 'shows') {
+        result = currentFeedData.filter(i => i.type === 'show');
       } else {
-        clickEntries.sort((a, b) => b[1].clicks - a[1].clicks);
-        tableBody.innerHTML = clickEntries.slice(0, 6).map(([id, item]) => `
-          <tr class="hover:bg-[#161b22]">
-            <td class="p-2.5 text-white font-medium truncate max-w-[200px]">${item.name}</td>
-            <td class="p-2.5 text-slate-500">#${id}</td>
-            <td class="p-2.5 text-right font-bold text-green-400">${item.clicks}</td>
-          </tr>
-        `).join('');
+        result = [...currentFeedData];
       }
 
-      // Render searched keywords
-      const searchList = document.getElementById('recentSearchesList');
-      const searchEntries = Object.entries(stats.searches || {});
-      if (searchEntries.length === 0) {
-        searchList.innerHTML = `<span class="text-slate-500 italic">No search terms tracked yet</span>`;
-      } else {
-        searchEntries.sort((a, b) => b[1] - a[1]);
-        searchList.innerHTML = searchEntries.slice(0, 10).map(([word, count]) => `
-          <span class="bg-[#161b22] border border-[#30363d] px-2 py-0.5 rounded text-slate-300">
-            "${word}" <strong class="text-blue-400">(${count})</strong>
-          </span>
+      // Genre filter
+      if (currentSelectedGenre !== 'all') {
+        result = result.filter(item => 
+          item.genres && item.genres.some(g => g.toLowerCase().includes(currentSelectedGenre.toLowerCase()))
+        );
+      }
+
+      // Sort
+      const sortVal = document.getElementById('sortSelector').value;
+      if (sortVal === 'popular') {
+        result.sort((a, b) => parseFloat(b.score || 0) - parseFloat(a.score || 0));
+      } else if (sortVal === 'alpha') {
+        result.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortVal === 'year') {
+        result.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
+      }
+
+      renderDirectoryCards(result);
+    }
+
+    // ==============================================================
+    // 7. REAL-TIME SEARCH (MODAL & SUGGESTIONS)
+    // ==============================================================
+    let searchDebounceTimer = null;
+
+    async function executeLiveSearch(query, scope = 'all') {
+      const listContainer = document.getElementById('modalResultsList');
+      if (!query || query.trim().length < 2) {
+        listContainer.innerHTML = `<div class="text-center py-10 text-slate-500 font-mono text-[11px]">Type at least 2 characters to trigger live query...</div>`;
+        return;
+      }
+
+      recordSearchQuery(query);
+      listContainer.innerHTML = `<div class="text-center py-10 text-cyan-400 font-mono text-xs"><i class="fa-solid fa-circle-notch animate-spin mr-2"></i>Searching live media indexes...</div>`;
+
+      try {
+        let combinedResults = [];
+
+        // AniList Anime & Manga queries
+        if (scope === 'all' || scope === 'anime' || scope === 'manga') {
+          const mediaType = scope === 'manga' ? 'MANGA' : 'ANIME';
+          const aniRes = await fetch(ANILIST_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: ANILIST_SEARCH_QUERY,
+              variables: { search: query, type: mediaType }
+            })
+          });
+          const aniJson = await aniRes.json();
+          const aniItems = (aniJson.data?.Page?.media || []).map(m => ({
+            id: m.id,
+            title: m.title.english || m.title.romaji,
+            type: m.type === 'ANIME' ? 'anime' : 'manga',
+            score: m.averageScore ? (m.averageScore / 10).toFixed(1) : '8.0',
+            year: m.seasonYear || '2024',
+            cover: m.coverImage?.large,
+            format: m.format || m.type
+          }));
+          combinedResults.push(...aniItems);
+        }
+
+        // TVMaze TV/Show query
+        if (scope === 'all' || scope === 'shows') {
+          const tvRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`);
+          const tvJson = await tvRes.json();
+          const tvItems = (tvJson || []).slice(0, 6).map(e => ({
+            id: e.show.id,
+            title: e.show.name,
+            type: 'show',
+            score: e.show.rating?.average ? e.show.rating.average.toFixed(1) : '7.5',
+            year: e.show.premiered ? e.show.premiered.substring(0, 4) : '2023',
+            cover: e.show.image?.medium,
+            format: e.show.type || 'TV'
+          }));
+          combinedResults.push(...tvItems);
+        }
+
+        if (combinedResults.length === 0) {
+          listContainer.innerHTML = `
+            <div class="text-center py-8 text-slate-400 font-mono text-xs">
+              No matching records found across AniList and TVMaze for "${query}".
+            </div>`;
+          return;
+        }
+
+        listContainer.innerHTML = combinedResults.map(item => `
+          <a 
+            href="entry.html?id=${item.id}&type=${item.type}" 
+            onclick="recordAnalyticsClick('${item.id}', '${escapeAttr(item.title)}', '${item.type}', 'search_suggest')"
+            class="flex items-center gap-3 p-2 rounded-xl hover:bg-surfaceHover transition-colors group"
+          >
+            <img 
+              src="${item.cover || 'https://placehold.co/80x120/131926/8b949e?text=?'}" 
+              alt="${escapeAttr(item.title)}" 
+              class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10"
+              onerror="this.src='https://placehold.co/80x120/131926/8b949e?text=?'"
+            >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] font-mono uppercase px-1.5 py-0.2 rounded border bg-void text-slate-300 border-white/10">${item.type}</span>
+                <span class="text-xs text-yellow-300 font-mono font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${item.score}</span>
+                <span class="text-xs text-slate-400 font-mono">${item.year}</span>
+              </div>
+              <h4 class="text-white text-xs font-semibold truncate group-hover:text-cyan-400 transition-colors mt-0.5">
+                ${item.title}
+              </h4>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-white text-xs mr-2 transition-transform group-hover:translate-x-1"></i>
+          </a>
         `).join('');
+
+      } catch (err) {
+        listContainer.innerHTML = `<div class="text-center py-6 text-red-400 font-mono text-xs">API search timeout. Please try again.</div>`;
       }
     }
 
-    // -------------------------------------------------------------
-    // Event Listeners & Bootstrapping
-    // -------------------------------------------------------------
+    // ==============================================================
+    // 8. EVENT LISTENERS & DOM HOOKS
+    // ==============================================================
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Record Page Impression
-      recordPageView();
-      updateBookmarkUI();
-      refreshStatsUI();
+      // Record directory page view
+      const stats = getAnalytics();
+      stats.totalViews = (stats.totalViews || 0) + 1;
+      localStorage.setItem(ANALYTICS_STORAGE_KEY, JSON.stringify(stats));
 
-      // 2. Fetch initial shows from TVMaze
-      fetchPopularShows();
+      updateWatchlistCounters();
+      initializeQwidDirectory();
 
-      // Search Inputs
-      const mainSearch = document.getElementById('mainSearchInput');
-      const navSearch = document.getElementById('navSearchInput');
-      const clearBtn = document.getElementById('clearSearchBtn');
-      const submitBtn = document.getElementById('searchSubmitBtn');
-
-      function triggerSearch(val) {
-        mainSearch.value = val;
-        navSearch.value = val;
-        clearBtn.classList.toggle('hidden', !val);
-        searchShows(val);
-      }
-
-      mainSearch.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') triggerSearch(mainSearch.value);
-      });
-      navSearch.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') triggerSearch(navSearch.value);
-      });
-      submitBtn.addEventListener('click', () => triggerSearch(mainSearch.value));
-
-      clearBtn.addEventListener('click', () => {
-        mainSearch.value = '';
-        navSearch.value = '';
-        clearBtn.classList.add('hidden');
-        fetchPopularShows();
-      });
-
-      // Quick Filter preset buttons
-      document.querySelectorAll('.filter-preset-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const q = btn.getAttribute('data-query');
-          triggerSearch(q);
+      // Category Tabs
+      document.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.cat-tab').forEach(t => {
+            t.className = 'cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-surface hover:bg-surfaceHover text-slate-300 border border-white/10';
+          });
+          tab.className = 'cat-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all bg-indigo-600 text-white shadow-glow-indigo border border-indigo-400/40';
+          
+          currentActiveCategory = tab.getAttribute('data-cat');
+          applyFiltersAndRender();
         });
       });
 
-      // Sort Dropdown
-      document.getElementById('sortSelector').addEventListener('change', () => {
-        renderFeed(currentShows);
+      // Genre Chips
+      document.querySelectorAll('.genre-tag-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.genre-tag-btn').forEach(b => {
+            b.className = 'genre-tag-btn px-2.5 py-1 rounded-lg bg-surface hover:bg-surfaceHover text-slate-400 border border-white/10 shrink-0 font-mono text-[11px]';
+          });
+          btn.className = 'genre-tag-btn px-2.5 py-1 rounded-lg bg-surfaceHover text-cyan-300 border border-cyan-500/40 shrink-0 font-mono text-[11px]';
+          
+          currentSelectedGenre = btn.getAttribute('data-genre');
+          applyFiltersAndRender();
+        });
       });
 
-      // Reset Button on empty state
-      document.getElementById('resetSearchBtn').addEventListener('click', () => {
-        mainSearch.value = '';
-        navSearch.value = '';
-        clearBtn.classList.add('hidden');
-        fetchPopularShows();
+      // Sort Selector
+      document.getElementById('sortSelector').addEventListener('change', applyFiltersAndRender);
+
+      // Reset empty button
+      document.getElementById('resetDirectoryFilterBtn').addEventListener('click', () => {
+        currentActiveCategory = 'all';
+        currentSelectedGenre = 'all';
+        applyFiltersAndRender();
+      });
+
+      // Shuffle Spotlight Button
+      document.getElementById('spotlightShuffleBtn').addEventListener('click', () => {
+        if (spotlightPool.length > 1) {
+          const randomIndex = Math.floor(Math.random() * spotlightPool.length);
+          updateSpotlightCard(spotlightPool[randomIndex]);
+          triggerToast('Spotlight randomized!', 'fa-shuffle text-cyan-400');
+        }
       });
 
       // Sponsor Click Tracking
-      document.getElementById('sponsorActionBtn').addEventListener('click', () => {
-        recordSponsorClick();
-        showToast('Recorded outbound click for Sponsor #1');
+      document.getElementById('sponsorClickBtn').addEventListener('click', () => {
+        recordAnalyticsClick('vpn_slot_1', 'NordVPN 70% Discount Partner', 'affiliate', 'sponsor');
       });
 
-      // Bookmarks Filter Toggle
-      document.getElementById('filterBookmarksBtn').addEventListener('click', () => {
-        const bookmarks = getBookmarks();
-        if (bookmarks.length === 0) {
-          showToast('No saved bookmarks yet!');
-          return;
-        }
-        isShowingOnlyBookmarks = !isShowingOnlyBookmarks;
-        if (isShowingOnlyBookmarks) {
-          document.getElementById('sectionHeading').textContent = 'Your Saved Watchlist';
-          // Convert bookmarks to format compatible with renderFeed
-          const formatted = bookmarks.map(b => ({
-            id: b.id,
-            name: b.name,
-            image: { medium: b.image },
-            rating: { average: parseFloat(b.rating) || 0 },
-            status: 'Saved',
-            genres: ['Watchlist'],
-            summary: 'Saved bookmark in client storage.'
-          }));
-          renderFeed(formatted);
-        } else {
-          document.getElementById('sectionHeading').textContent = 'Live Directory Feed';
-          renderFeed(currentShows);
-        }
+      // Nav Watchlist shortcut
+      document.getElementById('navWatchlistBtn').addEventListener('click', () => {
+        const watchlistTab = document.querySelector('.cat-tab[data-cat="watchlist"]');
+        if (watchlistTab) watchlistTab.click();
       });
 
-      // Advertiser Stats Modal Controls
-      const statsModal = document.getElementById('statsModal');
-      document.getElementById('openStatsBtn').addEventListener('click', () => {
-        refreshStatsUI();
-        statsModal.classList.remove('hidden');
-      });
-      document.getElementById('closeStatsBtn').addEventListener('click', () => {
-        statsModal.classList.add('hidden');
-      });
-      statsModal.addEventListener('click', (e) => {
-        if (e.target === statsModal) statsModal.classList.add('hidden');
+      // ------------------------------------------------------------
+      // Search Modal Controls & Keyboard Shortcuts
+      // ------------------------------------------------------------
+      const modal = document.getElementById('searchModal');
+      const openBtn = document.getElementById('openSearchModalBtn');
+      const closeBtn = document.getElementById('closeSearchModalBtn');
+      const modalInput = document.getElementById('modalSearchInput');
+
+      function openSearch() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => modalInput.focus(), 50);
+      }
+      function closeSearch() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      openBtn.addEventListener('click', openSearch);
+      closeBtn.addEventListener('click', closeSearch);
+
+      // Close on backdrop click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeSearch();
       });
 
-      // Export Analytics to JSON for sending to advertisers
-      document.getElementById('exportStatsJsonBtn').addEventListener('click', () => {
-        const stats = getMetrics();
-        const exportObj = {
-          domain: window.location.hostname || 'qwidindex.local',
-          generatedAt: new Date().toISOString(),
-          overview: {
-            totalPageImpressions: stats.pageViews,
-            totalMediaIntentClicks: stats.entryClicks,
-            totalSponsorClicks: stats.sponsorClicks,
-          },
-          topPerformingMedia: stats.titleClicks,
-          searchKeywordsVolume: stats.searches
-        };
-
-        const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `qwidindex-advertiser-metrics-${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('Exported metrics report for advertisers!');
-      });
-
-      // Reset Stats (Local clearing)
-      document.getElementById('resetStatsBtn').addEventListener('click', () => {
-        localStorage.removeItem(STATS_KEY);
-        refreshStatsUI();
-        showToast('Reset local metrics to zero.');
-      });
-
-      // Global hotkey '/' to jump to search
+      // Global hotkey: Ctrl + K or Cmd + K or "/"
       window.addEventListener('keydown', (e) => {
-        if (e.key === '/' && document.activeElement !== mainSearch && document.activeElement !== navSearch) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
           e.preventDefault();
-          mainSearch.focus();
+          openSearch();
+        } else if (e.key === 'Escape') {
+          closeSearch();
         }
+      });
+
+      // Modal Input Debounced Search
+      modalInput.addEventListener('input', (e) => {
+        clearTimeout(searchDebounceTimer);
+        const query = e.target.value;
+        const scope = document.querySelector('input[name="modalScope"]:checked')?.value || 'all';
+        searchDebounceTimer = setTimeout(() => {
+          executeLiveSearch(query, scope);
+        }, 320);
+      });
+
+      // Radio Scope change triggers live reload
+      document.querySelectorAll('input[name="modalScope"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          const query = modalInput.value;
+          const scope = radio.value;
+          executeLiveSearch(query, scope);
+        });
       });
     });
   </script>

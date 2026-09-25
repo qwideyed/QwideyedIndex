@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QwidIndex — Universal Streaming & Media Directory</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 for crisp icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            midnight: '#07090e',
+            obsidian: '#0e111a',
+            surface: 'rgba(18, 22, 34, 0.72)',
+            surfaceHover: 'rgba(28, 34, 52, 0.85)',
+            glowCyan: '#06b6d4',
+            glowViolet: '#8b5cf6',
+            glowPink: '#ec4899',
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px -4px rgba(6, 182, 212, 0.35)',
+            'glow-violet': '0 0 25px -4px rgba(139, 92, 246, 0.35)',
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232b40;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+
+    /* Glass Effect Utilities */
+    .glass-panel {
+      background: rgba(14, 18, 28, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel-elevated {
+      background: rgba(20, 26, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .glass-input {
+      background: rgba(9, 12, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #facc15 0%, #fb923c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="bg-midnight text-slate-100 min-h-screen relative overflow-x-hidden selection:bg-cyan-500 selection:text-white">
+
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl animate-pulse-slow"></div>
+    <div class="absolute top-1/4 -right-40 w-[30rem] h-[30rem] bg-violet-600/15 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-10 left-1/3 w-80 h-80 bg-pink-600/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 3s;"></div>
+    <!-- Fine grid pattern overlay -->
+    <div class="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-70"></div>
+  </div>
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group focus:outline-none">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-glow-cyan transition-transform group-hover:scale-105 duration-300">
+          <i class="fa-solid fa-compass text-white text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">Qwid<span class="text-cyan-400">Index</span></span>
+            <span class="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">v1.0 Free</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium hidden sm:block">Universal Stream Radar</p>
+        </div>
+      </a>
+
+      <!-- Center Quick Search Bar Trigger (Nav item) -->
+      <div class="hidden md:flex flex-1 max-w-md mx-6">
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input 
+            type="text" 
+            id="navQuickSearch" 
+            placeholder="Quick search titles, actors, platforms... (Ctrl + K)" 
+            class="w-full glass-input text-xs text-white rounded-full py-2.5 pl-9 pr-14 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-slate-500"
+          >
+          <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">Ctrl K</kbd>
+        </div>
+      </div>
+
+      <!-- Right Navigation Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Bookmark Counter Drawer Trigger Button -->
+        <button 
+          id="bookmarkDrawerBtn" 
+          class="relative flex items-center gap-2 px-3.5 py-2 rounded-xl glass-input text-slate-300 hover:text-white hover:border-cyan-500/50 transition-all text-xs font-medium group"
+          title="Open Bookmarks Drawer"
+        >
+          <i class="fa-solid fa-heart text-pink-500 group-hover:scale-110 transition-transform"></i>
+          <span class="hidden sm:inline">Saved Hub</span>
+          <span id="navBookmarkCount" class="w-5 h-5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/40 text-[10px] font-bold flex items-center justify-center">0</span>
+        </button>
+
+        <!-- Monetization / Support CTA -->
+        <a 
+          href="#monetizationSlot" 
+          class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 hover:text-amber-200 border border-amber-500/30 text-xs font-semibold hover:border-amber-400 transition-all"
+        >
+          <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+          <span>Deals</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 relative z-10">
+
+    <!-- Hero Banner with Spotlight Glow -->
+    <section class="text-center py-10 sm:py-14 relative">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-medium mb-6 backdrop-blur-md shadow-glow-cyan animate-float">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+        Zero Host Fees • 100% Free Public Metadata Index
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 leading-tight">
+        Track, Find & Stream <br class="hidden sm:block">
+        <span class="text-gradient">Everything Across The Web.</span>
+      </h1>
+
+      <p class="max-w-2xl mx-auto text-slate-400 text-sm sm:text-base leading-relaxed mb-8">
+        No subscription walls. No broken trackers. Real-time availability directory mapping movies, shows, and anime across verified platforms and free ad-supported catalogs.
+      </p>
+
+      <!-- Main Interactive Search Box -->
+      <div class="max-w-2xl mx-auto relative group mb-6">
+        <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 rounded-2xl blur-md opacity-35 group-hover:opacity-65 transition duration-500"></div>
+        <div class="relative flex items-center glass-panel-elevated rounded-2xl p-2 sm:p-2.5 shadow-2xl">
+          <i class="fa-solid fa-magnifying-glass text-cyan-400 text-base sm:text-lg pl-3 pr-2"></i>
+          <input 
+            type="text" 
+            id="heroSearchInput" 
+            placeholder="Search by title, genre, year, or provider (e.g., Cyberpunk, 2024, Netflix)..." 
+            class="w-full bg-transparent text-sm sm:text-base text-white px-2 py-1.5 focus:outline-none placeholder:text-slate-500"
+          >
+          <button 
+            id="clearSearchBtn" 
+            class="text-slate-400 hover:text-white px-3 py-1 text-sm hidden"
+            title="Clear search"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Genre & Quick Tag Chips -->
+      <div class="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto" id="genreTagList">
+        <span class="text-xs text-slate-500 font-medium mr-1 py-1"><i class="fa-solid fa-fire text-amber-500 mr-1"></i>Trending Tags:</span>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Action">Action</button>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Sci-Fi">Sci-Fi</button>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Anime">Anime</button>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Cyberpunk">Cyberpunk</button>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Thriller">Thriller</button>
+        <button class="genre-tag-chip text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-cyan-400 hover:text-cyan-300 text-slate-300 transition-all" data-tag="Free Stream">Free Streams</button>
+      </div>
+    </section>
+
+    <section class="mb-10" id="monetizationSlot">
+      <div class="glass-panel rounded-2xl p-5 sm:p-6 border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-cyan-950/40 relative overflow-hidden group">
+        <div class="absolute -right-16 -top-16 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/20 transition duration-700"></div>
+        
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0 text-indigo-400 text-xl shadow-glow-violet">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">Featured Partner • Affiliate</span>
+                <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-star text-[10px]"></i> 70% Exclusive Rebate</span>
+              </div>
+              <h3 class="text-base sm:text-lg font-bold text-white leading-snug">
+                Unlock 4,000+ Geo-Restricted Catalogs & Stream Securely
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+                Bypass region locks on Netflix, Crunchyroll, and BBC iPlayer with high-speed streaming tunnels. Zero log tracking and 30-day money-back guarantee.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 shrink-0 w-full md:w-auto">
+            <a 
+              href="https://nordvpn.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="w-full md:w-auto text-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-glow-cyan transition-all transform hover:-translate-y-0.5"
+            >
+              Claim 70% Off Shield <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+      
+      <!-- Primary Category Pills -->
+      <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl glass-input w-full md:w-auto" id="categoryFilterContainer">
+        <button class="cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" data-category="all">
+          <i class="fa-solid fa-border-all mr-1.5"></i>All Media
+        </button>
+        <button class="cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-category="movie">
+          <i class="fa-solid fa-film mr-1.5"></i>Movies
+        </button>
+        <button class="cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-category="series">
+          <i class="fa-solid fa-tv mr-1.5"></i>TV Series
+        </button>
+        <button class="cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-category="anime">
+          <i class="fa-solid fa-dragon mr-1.5"></i>Anime
+        </button>
+        <button class="cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-category="free">
+          <i class="fa-solid fa-unlock mr-1.5"></i>Free Catalogs
+        </button>
+      </div>
+
+      <!-- Sorting & Live Item Count -->
+      <div class="flex items-center justify-between w-full md:w-auto gap-4 text-xs text-slate-400">
+        <div>
+          Showing <span id="visibleCount" class="font-bold text-white">0</span> titles
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="sortSelector" class="hidden sm:inline">Sort:</label>
+          <select id="sortSelector" class="glass-input rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer">
+            <option value="trending">🔥 Trending Now</option>
+            <option value="rating">⭐ Highest Rated</option>
+            <option value="newest">🕒 Year (Newest)</option>
+            <option value="title">🔤 Title (A - Z)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Cards dynamically populated via JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="noResultsState" class="hidden text-center py-20 glass-panel rounded-2xl border border-white/5 mt-6">
+      <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto text-slate-500 text-2xl mb-4">
+        <i class="fa-solid fa-binoculars"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-1">No streaming listings found</h3>
+      <p class="text-sm text-slate-400 max-w-sm mx-auto mb-5">Try relaxing your search terms or selecting another genre category.</p>
+      <button id="resetFiltersBtn" class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 text-xs font-semibold transition-all">
+        Reset All Filters
+      </button>
+    </div>
+
+  </main>
+
+  <div id="optionsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="modalBox" class="glass-panel-elevated w-full max-w-lg rounded-3xl p-6 sm:p-8 transform scale-95 transition-transform duration-300 relative shadow-2xl">
+      
+      <!-- Close Button -->
+      <button id="closeModalBtn" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-start gap-4 mb-6">
+        <div id="modalPoster" class="w-20 h-28 rounded-xl bg-cover bg-center shrink-0 border border-white/10 shadow-lg"></div>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="modalType" class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">Series</span>
+            <span id="modalRating" class="text-xs font-bold text-amber-400"><i class="fa-solid fa-star text-[10px]"></i> 8.9</span>
+            <span id="modalYear" class="text-xs text-slate-400">2023</span>
+          </div>
+          <h2 id="modalTitle" class="text-xl font-bold text-white leading-tight">Title Here</h2>
+          <p id="modalGenre" class="text-xs text-slate-400 mt-1">Sci-Fi, Mystery</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <p id="modalSynopsis" class="text-xs text-slate-300 leading-relaxed max-h-24 overflow-y-auto pr-2">
+          Synopsis text...
+        </p>
+      </div>
+
+      <!-- Health Bar Indicator -->
+      <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs text-slate-300 font-medium">Index Indexer Status:</span>
+        </div>
+        <span class="text-xs font-mono font-semibold text-emerald-400">Verified & Active (99.8%)</span>
+      </div>
+
+      <!-- Streaming Platforms List -->
+      <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+        <i class="fa-solid fa-play text-cyan-400"></i> Verified Streaming Options
+      </h4>
+
+      <div id="modalPlatformsList" class="space-y-2 mb-6 max-h-48 overflow-y-auto pr-1">
+        <!-- Dynamically inserted links -->
+      </div>
+
+      <!-- Affiliate Tip Inside Modal -->
+      <div class="p-3 rounded-xl bg-gradient-to-r from-violet-900/30 to-indigo-900/30 border border-violet-500/30 flex items-center justify-between text-xs">
+        <span class="text-slate-300"><i class="fa-solid fa-lock text-violet-400 mr-1.5"></i> Stream blocked in your territory?</span>
+        <a href="https://nordvpn.com" target="_blank" rel="noopener noreferrer" class="text-violet-300 font-bold hover:underline shrink-0 ml-2">Switch IP &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+
+  <aside id="bookmarkDrawer" class="fixed top-0 right-0 h-full w-full max-w-sm glass-panel-elevated z-50 transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-heart text-pink-500"></i>
+        <h3 class="text-base font-bold text-white">Saved Radar List</h3>
+      </div>
+      <button id="closeDrawerBtn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Drawer Content -->
+    <div id="bookmarkList" class="p-5 flex-1 overflow-y-auto space-y-3">
+      <!-- Populated via JS -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-5 border-t border-white/10 bg-midnight/60">
+      <button id="clearBookmarksBtn" class="w-full py-2.5 rounded-xl border border-red-500/30 hover:bg-red-500/20 text-red-300 text-xs font-medium transition-all">
+        <i class="fa-regular fa-trash-can mr-1.5"></i>Clear All Bookmarks
+      </button>
+    </div>
+  </aside>
+
+  <footer class="glass-panel border-t border-white/10 py-12 relative z-10 text-slate-400 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Responsive AdSense Placeholder Slot (Zero Cost Readiness) -->
+      <div class="mb-10 p-6 rounded-2xl glass-input border border-dashed border-white/20 text-center relative overflow-hidden">
+        <span class="absolute top-2 right-3 text-[10px] font-mono text-slate-500 uppercase tracking-widest">Ad Slot Placement (728x90 / Responsive)</span>
+        <div class="py-4">
+          <p class="text-slate-300 font-semibold mb-1"><i class="fa-solid fa-rectangle-ad text-indigo-400 mr-1.5"></i> Monetization Ready: Connect Google AdSense or Carbon Ads</p>
+          <p class="text-[11px] text-slate-500">Zero backend requirements. Insert your script tags here when traffic scales to generate passive impressions.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center">
+              <i class="fa-solid fa-compass text-white text-xs"></i>
+            </div>
+            <span class="text-base font-bold text-white">Qwid<span class="text-cyan-400">Index</span></span>
+          </div>
+          <p class="text-slate-400 text-xs leading-relaxed max-w-md">
+            QwidIndex is an open, client-driven metadata directory index. We organize where publicly indexed content is hosted across legal distributors, official licenses, and public mirrors without hosting video streams.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-3">Explore Categories</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Top Action Picks</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Weekly Anime Simulcasts</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">Free Ad-Supported (FAST)</a></li>
+            <li><a href="#" class="hover:text-cyan-400 transition-colors">4K HDR Releases</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-3">Legal & Transparency</h4>
+          <p class="text-[11px] text-slate-500 leading-normal">
+            All registered trademarks, logos, and service marks belong to their respective owners. QwidIndex operates under the zero-cost open metadata initiative.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+        <p>&copy; 2026 QwidIndex Directory. Designed for static $0 zero-cost hosting.</p>
+        <div class="flex items-center gap-4">
+          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Edge Distributed</span>
+          <span>GitHub Pages Compatible</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast Box -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 glass-panel-elevated px-4 py-3 rounded-2xl text-xs font-semibold text-white flex items-center gap-3 shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-cyan-400 text-base"></i>
+    <span id="toastMsg">Notification message</span>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // Comprehensive Local Media Database (Zero Server / Zero Cost)
+    // -------------------------------------------------------------
+    const MEDIA_DATABASE = [
+      {
+        id: "qw-01",
+        title: "Cyberpunk: Edgerunners",
+        category: "anime",
+        year: 2022,
+        rating: 8.6,
+        badge: "Trending",
+        badgeColor: "bg-red-500/20 text-red-300 border-red-500/30",
+        poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=700&auto=format&fit=crop&q=80",
+        genres: ["Anime", "Sci-Fi", "Cyberpunk", "Action"],
+        synopsis: "A street kid trying to survive in a technology and body modification-obsessed city of the future. Having everything to lose, he chooses to stay alive by becoming an edgerunner.",
+        platforms: [
+          { name: "Netflix", type: "Subscription", quality: "4K HDR", url: "https://netflix.com", verified: true },
+          { name: "Public Trackers / Mirror", type: "Direct Guide", quality: "1080p", url: "https://justwatch.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-02",
+        title: "Dune: Part Two",
+        category: "movie",
+        year: 2024,
+        rating: 8.7,
+        badge: "Full 4K",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+        poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=700&auto=format&fit=crop&q=80",
+        genres: ["Sci-Fi", "Action", "Adventure"],
+        synopsis: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+        platforms: [
+          { name: "Max (HBO)", type: "Subscription", quality: "4K Dolby Vision", url: "https://max.com", verified: true },
+          { name: "Prime Video", type: "Rent / Buy", quality: "UHD", url: "https://amazon.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-03",
+        title: "Severance (Season 2)",
+        category: "series",
+        year: 2025,
+        rating: 8.9,
+        badge: "New Episode",
+        badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+        poster: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=700&auto=format&fit=crop&q=80",
+        genres: ["Sci-Fi", "Thriller", "Drama"],
+        synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.",
+        platforms: [
+          { name: "Apple TV+", type: "Subscription", quality: "4K Atmos", url: "https://tv.apple.com", verified: true },
+          { name: "Free Pilot Episode", type: "Free Trial", quality: "1080p", url: "https://tv.apple.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-04",
+        title: "Night of the Living Dead (Remastered)",
+        category: "free",
+        year: 1968,
+        rating: 7.9,
+        badge: "Free Stream",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+        poster: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=700&auto=format&fit=crop&q=80",
+        genres: ["Free Stream", "Horror", "Classic"],
+        synopsis: "A ragtag group of Pennsylvanians barricade themselves in an old farmhouse to remain safe from a horde of bloodthirsty ghouls.",
+        platforms: [
+          { name: "Tubi TV (Free w/ Ads)", type: "FAST Free", quality: "1080p", url: "https://tubitv.com", verified: true },
+          { name: "Internet Archive", type: "Public Domain", quality: "HD", url: "https://archive.org", verified: true },
+          { name: "Pluto TV", type: "Free Channel", quality: "720p", url: "https://pluto.tv", verified: true }
+        ]
+      },
+      {
+        id: "qw-05",
+        title: "Arcane: League of Legends",
+        category: "anime",
+        year: 2024,
+        rating: 9.0,
+        badge: "Trending",
+        badgeColor: "bg-red-500/20 text-red-300 border-red-500/30",
+        poster: "https://images.unsplash.com/photo-1563089145-599997674d42?w=700&auto=format&fit=crop&q=80",
+        genres: ["Anime", "Action", "Cyberpunk", "Drama"],
+        synopsis: "Set in utopian Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League champions-and the power that will tear them apart.",
+        platforms: [
+          { name: "Netflix", type: "Subscription", quality: "4K HDR", url: "https://netflix.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-06",
+        title: "Spider-Man: Across the Spider-Verse",
+        category: "movie",
+        year: 2023,
+        rating: 8.8,
+        badge: "Full 4K",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+        poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=700&auto=format&fit=crop&q=80",
+        genres: ["Action", "Sci-Fi", "Animation"],
+        synopsis: "Miles Morales catapults across the Multiverse, where he encounters a team of Spider-People charged with protecting its very existence.",
+        platforms: [
+          { name: "Netflix", type: "Subscription", quality: "4K", url: "https://netflix.com", verified: true },
+          { name: "Amazon Prime", type: "Rent / Buy", quality: "4K UHD", url: "https://amazon.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-07",
+        title: "Shōgun",
+        category: "series",
+        year: 2024,
+        rating: 8.7,
+        badge: "Trending",
+        badgeColor: "bg-red-500/20 text-red-300 border-red-500/30",
+        poster: "https://images.unsplash.com/photo-1528164344705-475426879c0d?w=700&auto=format&fit=crop&q=80",
+        genres: ["Drama", "Action", "Historical"],
+        synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.",
+        platforms: [
+          { name: "Hulu / Disney+", type: "Subscription", quality: "4K Atmos", url: "https://hulu.com", verified: true }
+        ]
+      },
+      {
+        id: "qw-08",
+        title: "Frieren: Beyond Journey's End",
+        category: "anime",
+        year: 2024,
+        rating: 9.1,
+        badge: "New Episode",
+        badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+        poster: "https://images.unsplash.com/photo-1514539079130-25950c84af65?w=700&auto=format&fit=crop&q=80",
+        genres: ["Anime", "Adventure", "Drama"],
+        synopsis: "An elf mage honors the memory of her former companions by embarking on a new quest decades after their party defeated the Demon King.",
+        platforms: [
+          { name: "Crunchyroll", type: "Sub / Dub Free w/ Ads", quality: "1080p", url: "https://crunchyroll.com", verified: true },
+          { name: "Muse Asia (YouTube)", type: "Free Official", quality: "1080p", url: "https://youtube.com", verified: true }
+        ]
+      }
+    ];
+
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let selectedSort = 'trending';
+    let bookmarks = [];
+
+    // Load Bookmarks from LocalStorage
+    try {
+      const saved = localStorage.getItem('qwid_bookmarks');
+      if (saved) bookmarks = JSON.parse(saved);
+    } catch (e) {
+      console.warn("Storage warning: Could not read local storage.");
+      bookmarks = [];
+    }
+
+    // DOM Elements
+    const mediaGrid = document.getElementById('mediaGrid');
+    const noResultsState = document.getElementById('noResultsState');
+    const visibleCountSpan = document.getElementById('visibleCount');
+    const heroSearchInput = document.getElementById('heroSearchInput');
+    const navQuickSearch = document.getElementById('navQuickSearch');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const sortSelector = document.getElementById('sortSelector');
+    const navBookmarkCount = document.getElementById('navBookmarkCount');
+    const bookmarkDrawer = document.getElementById('bookmarkDrawer');
+    const bookmarkDrawerBtn = document.getElementById('bookmarkDrawerBtn');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const bookmarkList = document.getElementById('bookmarkList');
+    const clearBookmarksBtn = document.getElementById('clearBookmarksBtn');
+    const optionsModal = document.getElementById('optionsModal');
+    const modalBox = document.getElementById('modalBox');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const toastNotification = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMsg');
+    const toastIcon = document.getElementById('toastIcon');
+
+    function showToast(message, isSuccess = true) {
+      toastMsg.textContent = message;
+      toastIcon.className = isSuccess ? 'fa-solid fa-circle-check text-cyan-400 text-base' : 'fa-solid fa-circle-exclamation text-pink-400 text-base';
+      toastNotification.classList.remove('translate-y-24', 'opacity-0');
+      toastNotification.classList.add('translate-y-0', 'opacity-100');
+      
+      setTimeout(() => {
+        toastNotification.classList.remove('translate-y-0', 'opacity-100');
+        toastNotification.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    function saveBookmarksToStorage() {
+      try {
+        localStorage.setItem('qwid_bookmarks', JSON.stringify(bookmarks));
+      } catch (e) {
+        console.error("Storage error:", e);
+      }
+      updateBookmarkCounter();
+      renderBookmarksDrawer();
+    }
+
+    function toggleBookmark(id) {
+      const item = MEDIA_DATABASE.find(m => m.id === id);
+      if (!item) return;
+
+      const idx = bookmarks.findIndex(b => b.id === id);
+      if (idx > -1) {
+        bookmarks.splice(idx, 1);
+        showToast(`Removed "${item.title}" from saved list.`, false);
+      } else {
+        bookmarks.push(item);
+        showToast(`Saved "${item.title}" to your radar.`);
+      }
+      saveBookmarksToStorage();
+      renderGrid();
+    }
+
+    function updateBookmarkCounter() {
+      navBookmarkCount.textContent = bookmarks.length;
+    }
+
+    function renderBookmarksDrawer() {
+      if (bookmarks.length === 0) {
+        bookmarkList.innerHTML = `
+          <div class="text-center py-16 text-slate-500">
+            <i class="fa-regular fa-heart text-3xl mb-3 opacity-40"></i>
+            <p class="text-xs font-semibold text-slate-400">No saved shows or movies yet.</p>
+            <p class="text-[11px] text-slate-600 mt-1">Tap the heart icon on any media card to build your watchlist.</p>
+          </div>
+        `;
+        return;
+      }
+
+      bookmarkList.innerHTML = bookmarks.map(item => `
+        <div class="flex items-center gap-3 p-2.5 rounded-xl glass-input hover:border-white/20 transition-all group">
+          <img src="${item.poster}" alt="${item.title}" class="w-12 h-16 object-cover rounded-lg shrink-0 border border-white/10" onerror="this.src='https://placehold.co/48x64/090a10/ffffff?text=Qwid'">
+          <div class="flex-1 min-w-0">
+            <h5 class="text-xs font-bold text-white truncate">${item.title}</h5>
+            <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+              <span>${item.year}</span>
+              <span>•</span>
+              <span class="text-amber-400 font-semibold"><i class="fa-solid fa-star text-[9px]"></i> ${item.rating}</span>
+            </div>
+            <button onclick="openOptionsModal('${item.id}')" class="text-[10px] text-cyan-400 hover:underline mt-1 inline-block">
+              Watch Options &rarr;
+            </button>
+          </div>
+          <button onclick="toggleBookmark('${item.id}')" class="text-slate-500 hover:text-red-400 p-2 text-xs transition-colors" title="Remove">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function getFilteredData() {
+      return MEDIA_DATABASE.filter(item => {
+        // Category filtering
+        const matchesCategory = (activeCategory === 'all') || (item.category === activeCategory);
+
+        // Search query matching
+        const q = searchQuery.toLowerCase().trim();
+        const matchesSearch = !q || 
+          item.title.toLowerCase().includes(q) || 
+          item.genres.some(g => g.toLowerCase().includes(q)) || 
+          item.year.toString().includes(q) ||
+          item.platforms.some(p => p.name.toLowerCase().includes(q));
+
+        return matchesCategory && matchesSearch;
+      }).sort((a, b) => {
+        if (selectedSort === 'rating') return b.rating - a.rating;
+        if (selectedSort === 'newest') return b.year - a.year;
+        if (selectedSort === 'title') return a.title.localeCompare(b.title);
+        // Default: trending
+        return b.rating * (b.year >= 2024 ? 1.1 : 1.0) - a.rating;
+      });
+    }
+
+    function renderGrid() {
+      const data = getFilteredData();
+      visibleCountSpan.textContent = data.length;
+
+      if (data.length === 0) {
+        mediaGrid.classList.add('hidden');
+        noResultsState.classList.remove('hidden');
+        return;
+      }
+
+      mediaGrid.classList.remove('hidden');
+      noResultsState.classList.add('hidden');
+
+      mediaGrid.innerHTML = data.map(item => {
+        const isBookmarked = bookmarks.some(b => b.id === item.id);
+        const heartClass = isBookmarked ? 'fa-solid fa-heart text-pink-500' : 'fa-regular fa-heart text-white/70 hover:text-pink-400';
+        
+        return `
+          <div class="glass-panel rounded-2xl overflow-hidden group hover:border-cyan-500/40 transition-all duration-300 hover:shadow-glow-cyan flex flex-col">
+            <!-- Card Poster Image -->
+            <div class="relative h-60 w-full overflow-hidden bg-slate-900">
+              <img 
+                src="${item.poster}" 
+                alt="${item.title}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                onerror="this.src='https://placehold.co/400x300/0f111a/ffffff?text=QwidIndex'"
+                loading="lazy"
+              >
+              <div class="absolute inset-0 bg-gradient-to-t from-midnight via-transparent to-black/40"></div>
+
+              <!-- Top Badges -->
+              <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono tracking-wide px-2.5 py-1 rounded-full font-bold border backdrop-blur-md ${item.badgeColor}">
+                  ${item.badge}
+                </span>
+
+                <button 
+                  onclick="toggleBookmark('${item.id}')" 
+                  class="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center transition-transform active:scale-90 hover:scale-110"
+                  title="${isBookmarked ? 'Remove Bookmark' : 'Add to Bookmarks'}"
+                >
+                  <i class="${heartClass} text-sm"></i>
+                </button>
+              </div>
+
+              <!-- Bottom overlay metadata -->
+              <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                <span class="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-amber-400 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-star text-[10px]"></i> ${item.rating}
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-slate-300 font-mono text-[11px]">
+                  ${item.year}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex flex-wrap gap-1 mb-2">
+                  ${item.genres.slice(0, 2).map(g => `
+                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/5">${g}</span>
+                  `).join('')}
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-1 mb-1">
+                  ${item.title}
+                </h3>
+                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
+                  ${item.synopsis}
+                </p>
+              </div>
+
+              <!-- Platform availability teaser & CTA -->
+              <div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-3 pt-2 border-t border-white/5">
+                  <span class="truncate max-w-[150px]"><i class="fa-solid fa-satellite-dish text-cyan-400 mr-1"></i> ${item.platforms[0]?.name || 'Web Index'}</span>
+                  <span class="text-emerald-400 font-mono text-[10px]"><i class="fa-solid fa-circle text-[6px] mr-1"></i>Online</span>
+                </div>
+
+                <button 
+                  onclick="openOptionsModal('${item.id}')"
+                  class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 hover:from-cyan-500 hover:to-indigo-600 text-cyan-300 hover:text-white border border-cyan-500/30 hover:border-transparent text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                  <i class="fa-solid fa-play text-[10px]"></i> Watch Options
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.openOptionsModal = function(id) {
+      const item = MEDIA_DATABASE.find(m => m.id === id);
+      if (!item) return;
+
+      document.getElementById('modalTitle').textContent = item.title;
+      document.getElementById('modalType').textContent = item.category.toUpperCase();
+      document.getElementById('modalRating').innerHTML = `<i class="fa-solid fa-star text-[10px]"></i> ${item.rating}`;
+      document.getElementById('modalYear').textContent = item.year;
+      document.getElementById('modalGenre').textContent = item.genres.join(' • ');
+      document.getElementById('modalSynopsis').textContent = item.synopsis;
+      
+      const posterElem = document.getElementById('modalPoster');
+      posterElem.style.backgroundImage = `url('${item.poster}')`;
+
+      const platformList = document.getElementById('modalPlatformsList');
+      platformList.innerHTML = item.platforms.map(p => `
+        <a 
+          href="${p.url}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/40 transition-all group"
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-300 group-hover:text-cyan-400">
+              <i class="fa-solid fa-circle-play text-sm"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                ${p.name}
+                ${p.verified ? '<i class="fa-solid fa-shield-check text-cyan-400 text-[10px]" title="Verified Provider"></i>' : ''}
+              </div>
+              <div class="text-[10px] text-slate-400 font-mono">${p.type}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">${p.quality}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500 group-hover:text-cyan-400"></i>
+          </div>
+        </a>
+      `).join('');
+
+      // Open animation
+      optionsModal.classList.remove('opacity-0', 'pointer-events-none');
+      optionsModal.classList.add('opacity-100');
+      modalBox.classList.remove('scale-95');
+      modalBox.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+    };
+
+    function closeOptionsModal() {
+      optionsModal.classList.remove('opacity-100');
+      optionsModal.classList.add('opacity-0', 'pointer-events-none');
+      modalBox.classList.remove('scale-100');
+      modalBox.classList.add('scale-95');
+      document.body.style.overflow = '';
+    }
+
+    // Sync Search Inputs
+    function handleSearch(value) {
+      searchQuery = value;
+      heroSearchInput.value = value;
+      navQuickSearch.value = value;
+      clearSearchBtn.classList.toggle('hidden', !value);
+      renderGrid();
+    }
+
+    heroSearchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+    navQuickSearch.addEventListener('input', (e) => handleSearch(e.target.value));
+    
+    clearSearchBtn.addEventListener('click', () => {
+      handleSearch('');
+      heroSearchInput.focus();
+    });
+
+    // Keyboard shortcut (Ctrl + K or Cmd + K)
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        heroSearchInput.focus();
+        heroSearchInput.select();
+      }
+      if (e.key === 'Escape') {
+        closeOptionsModal();
+        bookmarkDrawer.classList.add('translate-x-full');
+      }
+    });
+
+    // Category Pill Toggling
+    const categoryButtons = document.querySelectorAll('.cat-pill');
+    categoryButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        categoryButtons.forEach(b => {
+          b.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5 border border-transparent';
+        });
+        btn.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-medium transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+        activeCategory = btn.getAttribute('data-category');
+        renderGrid();
+      });
+    });
+
+    // Genre Tag Chips Clicking
+    document.querySelectorAll('.genre-tag-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const tag = chip.getAttribute('data-tag');
+        handleSearch(tag);
+      });
+    });
+
+    // Sorting Dropdown
+    sortSelector.addEventListener('change', (e) => {
+      selectedSort = e.target.value;
+      renderGrid();
+    });
+
+    // Reset Filters
+    document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+      handleSearch('');
+      activeCategory = 'all';
+      categoryButtons[0].click();
+    });
+
+    // Modal Events
+    closeModalBtn.addEventListener('click', closeOptionsModal);
+    optionsModal.addEventListener('click', (e) => {
+      if (e.target === optionsModal) closeOptionsModal();
+    });
+
+    // Bookmark Drawer Toggle
+    bookmarkDrawerBtn.addEventListener('click', () => {
+      bookmarkDrawer.classList.toggle('translate-x-full');
+      renderBookmarksDrawer();
+    });
+    closeDrawerBtn.addEventListener('click', () => {
+      bookmarkDrawer.classList.add('translate-x-full');
+    });
+    clearBookmarksBtn.addEventListener('click', () => {
+      if (bookmarks.length === 0) return;
+      bookmarks = [];
+      saveBookmarksToStorage();
+      showToast('All saved bookmarks cleared.', false);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateBookmarkCounter();
+      renderBookmarksDrawer();
+      renderGrid();
+    });
+  </script>
+</body>
+</html>

@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QwidIndex — Universal Anime, Manga & 18+ Database</title>
-  
-  <!-- Fonts: Plus Jakarta Sans for UI + JetBrains Mono for metadata & timers -->
+
+  <!-- Typography: Plus Jakarta Sans for UI + JetBrains Mono for Broadcast Timers & Metadata -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -34,11 +34,12 @@
             brandCyan: '#06b6d4',
             brandAmber: '#f59e0b',
             brandEmerald: '#10b981',
+            brandPurple: '#a855f7',
           },
           boxShadow: {
             'glow-pink': '0 0 25px -4px rgba(244, 63, 94, 0.45)',
             'glow-cyan': '0 0 25px -4px rgba(6, 182, 212, 0.35)',
-            'card-elevated': '0 12px 32px -8px rgba(0, 0, 0, 0.75)',
+            'card-elevated': '0 14px 34px -8px rgba(0, 0, 0, 0.75)',
           }
         }
       }
@@ -59,7 +60,7 @@
       background-size: 26px 26px;
     }
 
-    /* Slim scrollbars */
+    /* Modern slim scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -76,7 +77,7 @@
     }
 
     .glass-header {
-      background: rgba(11, 15, 25, 0.85);
+      background: rgba(11, 15, 25, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
@@ -125,12 +126,14 @@
     }
   </style>
 </head>
+
 <body class="min-h-screen flex flex-col bg-void selection:bg-brandPink selection:text-white">
 
   <!-- Ambient light gradients -->
   <div class="fixed top-0 left-1/4 w-96 h-96 bg-brandPink/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
   <div class="fixed top-1/3 right-1/4 w-96 h-96 bg-brandCyan/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
+  <!-- Sticky Top Glass Header -->
   <header class="sticky top-0 z-40 glass-header">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
       
@@ -174,30 +177,15 @@
           </button>
         </nav>
 
-        <!-- Directory link & Watchlist Quick Dropdown -->
+        <!-- Directory Quick Links & My Library Drawer Trigger -->
         <div class="hidden xl:flex items-center gap-5 text-xs font-medium text-slate-300">
           <a href="#browse-section" class="hover:text-white transition-colors">Directory</a>
+          <a href="#classics-section" class="hover:text-white transition-colors">Top Classics</a>
           
-          <div class="relative group">
-            <button class="flex items-center gap-1.5 hover:text-white transition-colors py-2">
-              <span>My Library</span>
-              <span id="libraryCountTag" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-surface border border-white/10 text-brandPink font-bold">0</span>
-              <i class="fa-solid fa-chevron-down text-[10px] text-slate-500"></i>
-            </button>
-
-            <!-- Library Flyout Menu -->
-            <div class="absolute left-0 top-full pt-1 hidden group-hover:block w-64 z-50">
-              <div class="bg-cardBg border border-borderHighlight rounded-xl shadow-2xl p-2 space-y-1">
-                <div class="px-3 py-1.5 border-b border-white/5 flex items-center justify-between text-[11px] font-mono">
-                  <span class="text-slate-400">SAVED TITLES</span>
-                  <button onclick="clearWatchlist()" class="text-pink-400 hover:underline">Clear</button>
-                </div>
-                <div id="quickWatchlistDropdown" class="max-h-56 overflow-y-auto divide-y divide-white/5 text-xs">
-                  <div class="p-3 text-center text-slate-500 text-[11px] font-mono">No entries saved yet.</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button onclick="toggleLibraryDrawer()" class="flex items-center gap-1.5 hover:text-white transition-colors py-2">
+            <span>My Library</span>
+            <span id="libraryCountTag" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-surface border border-white/10 text-brandPink font-bold">0</span>
+          </button>
         </div>
       </div>
 
@@ -212,13 +200,16 @@
       <!-- Right: Action Icons (Search, 18+ Toggle, Notifications, Random, Profile) -->
       <div class="flex items-center gap-2 sm:gap-2.5">
         
-        <!-- Quick Search Trigger -->
+        <!-- Quick Search Trigger (Ctrl+K) -->
         <button 
           id="openSearchModalBtn"
-          class="w-9 h-9 rounded-full bg-cardBg hover:bg-cardHover border border-borderSubtle text-slate-300 hover:text-white flex items-center justify-center transition-all group" 
+          onclick="openSearchModal()"
+          class="flex items-center gap-2 px-3 h-9 rounded-full bg-cardBg hover:bg-cardHover border border-borderSubtle text-slate-300 hover:text-white transition-all group" 
           title="Search Database (Ctrl+K)"
         >
           <i class="fa-solid fa-magnifying-glass text-xs group-hover:text-brandCyan transition-colors"></i>
+          <span class="text-xs text-slate-400 hidden sm:inline">Search...</span>
+          <kbd class="hidden md:inline-flex items-center font-mono text-[9px] text-slate-400 bg-obsidian border border-white/10 px-1.5 py-0.5 rounded">Ctrl K</kbd>
         </button>
 
         <!-- 18+ NSFW Toggle Button -->
@@ -232,40 +223,33 @@
           <span id="nsfwLabel">18+ OFF</span>
         </button>
 
-        <!-- Notification Bell (Recent schedule updates) -->
-        <button 
-          onclick="triggerToast('Notifications up to date. Broadcast radar is tracking live.')"
-          class="w-9 h-9 rounded-full bg-cardBg hover:bg-cardHover border border-borderSubtle text-slate-300 hover:text-white flex items-center justify-center transition-all"
-          title="Alerts"
-        >
-          <i class="fa-regular fa-bell text-xs"></i>
-        </button>
-
         <!-- Random Shuffle Button -->
         <button 
           onclick="shuffleSpotlight()"
-          class="w-9 h-9 rounded-full bg-brandPink hover:bg-brandPinkHover text-white flex items-center justify-center shadow-glow-pink transition-transform active:scale-95" 
+          class="w-8 h-8 rounded-full bg-brandPink hover:bg-brandPinkHover text-white flex items-center justify-center shadow-glow-pink transition-transform active:scale-95" 
           title="Shuffle Spotlight Pick"
         >
           <i class="fa-solid fa-shuffle text-xs"></i>
         </button>
 
-        <!-- Profile Avatar Placeholder -->
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-400 to-indigo-500 p-[1.5px] cursor-pointer">
-          <div class="w-full h-full bg-obsidian rounded-full flex items-center justify-center text-xs font-bold text-white">
-            <i class="fa-solid fa-user text-[11px]"></i>
-          </div>
-        </div>
+        <!-- Library Drawer Mobile Toggle -->
+        <button 
+          onclick="toggleLibraryDrawer()"
+          class="xl:hidden w-8 h-8 rounded-full bg-cardBg hover:bg-cardHover border border-borderSubtle text-slate-300 flex items-center justify-center"
+          title="Library"
+        >
+          <i class="fa-solid fa-bookmark text-xs text-brandPink"></i>
+        </button>
 
       </div>
 
     </div>
   </header>
 
-  <!-- Notice when 18+ mode is active -->
+  <!-- 18+ Warning Banner when active -->
   <div id="nsfwWarningBar" class="hidden bg-gradient-to-r from-pink-950/80 via-red-900/60 to-pink-950/80 border-b border-pink-500/40 text-[11px] font-mono py-1.5 px-4 text-center text-pink-200">
     <i class="fa-solid fa-triangle-exclamation mr-1.5 text-pink-400"></i>
-    <span>18+ Content Mode Active — Showing adult visual novels, doujinshi, and mature hentai archives.</span>
+    <span>18+ Content Mode Active — Displaying mature archives, doujinshi, and adult visual novel media.</span>
   </div>
 
   <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-5 flex-1 w-full space-y-7">
@@ -274,7 +258,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
       
       <!-- LEFT: Hero Spotlight Carousel (8 Cols) -->
-      <div class="lg:col-span-8 spotlight-card rounded-2xl relative overflow-hidden flex flex-col justify-between p-6 sm:p-8 min-h-[380px] shadow-card-elevated group">
+      <div class="lg:col-span-8 spotlight-card rounded-2xl relative overflow-hidden flex flex-col justify-between p-6 sm:p-8 min-h-[400px] shadow-card-elevated group">
         
         <!-- Spotlight Backdrop Image Layer -->
         <div id="spotlightBackdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-700 opacity-25 filter blur-xs pointer-events-none scale-102"></div>
@@ -309,23 +293,23 @@
         <!-- Middle: Title & Synopsis Preview -->
         <div class="relative z-10 space-y-2.5 max-w-2xl my-auto py-4">
           <h1 id="spotlightTitle" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight transition-all">
-            That Time I Got Reincarnated as a Slime Season 4
+            Loading Spotlight Title...
           </h1>
 
           <p id="spotlightSynopsis" class="text-xs sm:text-sm text-slate-300 line-clamp-3 leading-relaxed transition-all">
-            Demon Lord Rimuru's dream of creating an alliance between humans and monsters takes a step closer to being realized. As Tempest continues to prosper, Granvile Rozzo and his granddaughter clash with Demon Lord Rimuru in high-stakes tactical warfare.
+            Querying AniList live catalog for trending broadcasts and seasonal entries...
           </p>
 
           <!-- Format / Score tags -->
           <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
             <span id="spotlightScore" class="bg-amber-400/10 border border-amber-400/30 text-amber-300 px-2 py-0.5 rounded font-bold flex items-center gap-1">
-              <i class="fa-solid fa-star text-[9px]"></i> 8.6
+              <i class="fa-solid fa-star text-[9px]"></i> --
             </span>
             <span id="spotlightFormat" class="bg-cardBg border border-white/10 text-slate-300 px-2 py-0.5 rounded">
               TV ANIME
             </span>
             <span id="spotlightEpisodes" class="bg-cardBg border border-white/10 text-cyan-300 px-2 py-0.5 rounded">
-              24 eps
+              Ongoing
             </span>
           </div>
         </div>
@@ -336,11 +320,11 @@
           <div class="flex items-center gap-3">
             <a 
               id="spotlightActionLink"
-              href="entry.html?id=151807&type=anime" 
+              href="#" 
               onclick="logCardClick(currentSpotlightItem)"
               class="px-5 py-2.5 rounded-xl bg-brandPink hover:bg-brandPinkHover text-white font-bold text-xs tracking-wide shadow-glow-pink flex items-center gap-2 transition-all active:scale-98"
             >
-              <i class="fa-solid fa-plus text-[11px]"></i>
+              <i class="fa-solid fa-play text-[11px]"></i>
               <span>+ Track Entry</span>
             </a>
 
@@ -354,7 +338,7 @@
             </button>
           </div>
 
-          <!-- Carousel Dots (Active highlight) -->
+          <!-- Carousel Dots -->
           <div class="flex items-center gap-1.5 self-center sm:self-auto" id="spotlightDotsContainer">
             <!-- Populated via script -->
           </div>
@@ -380,7 +364,6 @@
 
           <!-- Airing Items Schedule List -->
           <div id="radarScheduleList" class="divide-y divide-white/5 space-y-1 mt-2 text-xs">
-            <!-- Simulated Skeleton while live schedule queries -->
             <div class="py-3 animate-pulse space-y-1.5">
               <div class="h-3 bg-cardBg rounded w-3/4"></div>
               <div class="h-2.5 bg-cardBg rounded w-1/3"></div>
@@ -410,6 +393,26 @@
 
       </div>
 
+    </div>
+
+    <!-- Quick Stats Metric Strip -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 py-1 font-mono text-xs">
+      <div class="p-3 rounded-xl bg-cardBg/60 border border-white/5 flex items-center justify-between">
+        <span class="text-slate-400">INDEX STATUS:</span>
+        <span class="text-emerald-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> OPERATIONAL</span>
+      </div>
+      <div class="p-3 rounded-xl bg-cardBg/60 border border-white/5 flex items-center justify-between">
+        <span class="text-slate-400">RADAR CHANNELS:</span>
+        <span id="quickRadarCount" class="text-brandCyan font-bold">24 Shows</span>
+      </div>
+      <div class="p-3 rounded-xl bg-cardBg/60 border border-white/5 flex items-center justify-between">
+        <span class="text-slate-400">ANILIST GRAPHQL:</span>
+        <span class="text-slate-200 font-bold">v2.8 Live</span>
+      </div>
+      <div class="p-3 rounded-xl bg-cardBg/60 border border-white/5 flex items-center justify-between">
+        <span class="text-slate-400">VAULT MATURE:</span>
+        <span id="quickVaultStatus" class="text-slate-400 font-bold">LOCKED (18+)</span>
+      </div>
     </div>
 
     <div id="sponsorBanner" class="rounded-xl border border-dashed border-cyan-500/30 hover:border-cyan-500/60 bg-gradient-to-r from-obsidian via-cardBg to-obsidian p-3.5 transition-all">
@@ -486,7 +489,7 @@
         <button onclick="filterByGenre('Sci-Fi')" class="genre-pill px-3 py-1 rounded-full bg-cardBg hover:bg-cardHover text-slate-400 border border-white/5 font-mono text-[11px] shrink-0" data-genre="Sci-Fi">Sci-Fi</button>
         <button onclick="filterByGenre('Romance')" class="genre-pill px-3 py-1 rounded-full bg-cardBg hover:bg-cardHover text-slate-400 border border-white/5 font-mono text-[11px] shrink-0" data-genre="Romance">Romance</button>
         <button onclick="filterByGenre('Supernatural')" class="genre-pill px-3 py-1 rounded-full bg-cardBg hover:bg-cardHover text-slate-400 border border-white/5 font-mono text-[11px] shrink-0" data-genre="Supernatural">Supernatural</button>
-        <button onclick="filterByGenre('Ecchi')" class="genre-pill px-3 py-1 rounded-full bg-cardBg hover:bg-cardHover text-pink-400 border border-pink-500/20 font-mono text-[11px] shrink-0" data-genre="Ecchi">Ecchi</button>
+        <button onclick="filterByGenre('Hentai')" class="genre-pill px-3 py-1 rounded-full bg-cardBg hover:bg-cardHover text-pink-400 border border-pink-500/20 font-mono text-[11px] shrink-0" data-genre="Hentai">Hentai (18+)</button>
       </div>
 
       <!-- Main Media Grid (Matching Screenshot 6-column aesthetic) -->
@@ -514,10 +517,28 @@
 
     </section>
 
+    <section id="classics-section" class="space-y-4 pt-6">
+      <div class="flex items-center justify-between pb-2 border-b border-white/5">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-crown text-amber-400 text-sm"></i>
+          <h2 class="text-base sm:text-lg font-extrabold text-white tracking-tight">
+            Hall of Fame Classics
+          </h2>
+        </div>
+        <span class="text-[11px] font-mono text-slate-400">All-Time Highest Rated</span>
+      </div>
+
+      <!-- Classics Horizontal Row -->
+      <div id="classicsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+        <!-- Dynamically populated via Classics API -->
+      </div>
+    </section>
+
   </main>
 
+  <!-- Search Modal (Ctrl + K) with Searchable Hentai & Age confirmation -->
   <div id="searchModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-start justify-center p-4 sm:p-6 pt-16 sm:pt-24 transition-all">
-    <div class="bg-obsidian border border-borderHighlight rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+    <div class="bg-obsidian border border-borderHighlight rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[82vh]">
       
       <!-- Search Input Header -->
       <div class="p-3.5 border-b border-white/10 flex items-center gap-3 bg-cardBg">
@@ -525,7 +546,7 @@
         <input 
           type="text" 
           id="modalSearchInput" 
-          placeholder="Search anime, manga, or hentai titles... (e.g., Slime, Bleach, Berserk)" 
+          placeholder="Search anime, manga, or 18+ hentai titles... (e.g., Slime, Bleach, Berserk)" 
           class="flex-1 bg-transparent border-none text-white text-sm focus:outline-none placeholder:text-slate-500 font-sans"
           autocomplete="off"
         >
@@ -535,15 +556,25 @@
         </button>
       </div>
 
-      <!-- Scope Switch -->
-      <div class="px-4 py-2 border-b border-white/5 flex items-center gap-4 text-[11px] font-mono text-slate-400 bg-void">
-        <span>Target:</span>
-        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
-          <input type="radio" name="searchScope" value="ANIME" checked class="accent-brandPink"> Anime
-        </label>
-        <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
-          <input type="radio" name="searchScope" value="MANGA" class="accent-brandPink"> Manga
-        </label>
+      <!-- Scope Switch (Includes Searchable 18+ Hentai scope) -->
+      <div class="px-4 py-2 border-b border-white/5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400 bg-void">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <span>Target:</span>
+          <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+            <input type="radio" name="searchScope" value="ANIME" checked class="accent-brandPink"> Anime
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer hover:text-slate-200">
+            <input type="radio" name="searchScope" value="MANGA" class="accent-brandPink"> Manga
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer hover:text-pink-300 text-pink-400 font-bold">
+            <input type="radio" name="searchScope" value="HENTAI" class="accent-pink-500"> 18+ Hentai
+          </label>
+        </div>
+
+        <div id="searchHentaiWarningTag" class="hidden text-pink-400 font-mono text-[10px] flex items-center gap-1">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Adult Index Active</span>
+        </div>
       </div>
 
       <!-- Live Search Results List -->
@@ -556,9 +587,52 @@
       <!-- Modal Footer -->
       <div class="p-2.5 border-t border-white/10 bg-cardBg/50 flex items-center justify-between text-[11px] font-mono text-slate-400 px-4">
         <span>Press <kbd class="bg-void px-1 py-0.5 rounded border border-white/10 text-slate-300">Enter</kbd> to view full entry</span>
-        <span>Powered by AniList GraphQL</span>
+        <span>Powered by AniList GraphQL (v2)</span>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Slide-out Library Drawer -->
+  <div id="libraryDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="toggleLibraryDrawer()"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-obsidian border-l border-white/10 shadow-2xl flex flex-col">
+        
+        <!-- Drawer Header -->
+        <div class="p-4 border-b border-white/10 flex items-center justify-between bg-cardBg">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bookmark text-brandPink text-sm"></i>
+            <h3 class="font-bold text-white text-sm">My Saved Library</h3>
+            <span id="drawerCountBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 font-bold">0</span>
+          </div>
+          <button onclick="toggleLibraryDrawer()" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Category Filter in Drawer -->
+        <div class="p-2.5 border-b border-white/5 bg-void flex items-center gap-1.5 text-xs font-mono">
+          <button onclick="filterLibraryDrawer('all')" class="lib-filter-pill px-2.5 py-1 rounded-md bg-brandPink text-white font-bold" data-lib="all">All</button>
+          <button onclick="filterLibraryDrawer('anime')" class="lib-filter-pill px-2.5 py-1 rounded-md bg-cardBg text-slate-400 hover:text-white" data-lib="anime">Anime</button>
+          <button onclick="filterLibraryDrawer('manga')" class="lib-filter-pill px-2.5 py-1 rounded-md bg-cardBg text-slate-400 hover:text-white" data-lib="manga">Manga</button>
+          <button onclick="filterLibraryDrawer('hentai')" class="lib-filter-pill px-2.5 py-1 rounded-md bg-cardBg text-pink-400 hover:text-white" data-lib="hentai">18+</button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div id="drawerItemsList" class="flex-1 overflow-y-auto p-4 space-y-2 divide-y divide-white/5 text-xs">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Drawer Footer with Clear Action -->
+        <div class="p-3 border-t border-white/10 bg-cardBg flex items-center justify-between font-mono text-[11px]">
+          <button onclick="clearWatchlist()" class="text-slate-400 hover:text-red-400 transition-colors">
+            <i class="fa-solid fa-trash mr-1"></i> Clear Library
+          </button>
+          <span class="text-slate-500">Stored Locally</span>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -674,6 +748,29 @@
       }
     `;
 
+    // Hall of fame classics query
+    const QUERY_CLASSICS = `
+      query {
+        Page(page: 1, perPage: 6) {
+          media(type: ANIME, sort: SCORE_DESC, isAdult: false) {
+            id
+            title {
+              english
+              romaji
+            }
+            type
+            format
+            averageScore
+            episodes
+            genres
+            coverImage {
+              large
+            }
+          }
+        }
+      }
+    `;
+
     // Broadcast radar query (Upcoming episodes with airingAt timestamps)
     const QUERY_AIRING_RADAR = `
       query {
@@ -698,7 +795,7 @@
       }
     `;
 
-    // Live search query
+    // Live search query (Accepts isAdult: Boolean for 18+ Hentai search)
     const QUERY_LIVE_SEARCH = `
       query ($search: String, $type: MediaType, $isAdult: Boolean) {
         Page(page: 1, perPage: 8) {
@@ -711,7 +808,9 @@
             type
             format
             episodes
+            chapters
             averageScore
+            isAdult
             coverImage {
               medium
             }
@@ -794,22 +893,56 @@
     function updateLibraryUI() {
       const list = getWatchlist();
       document.getElementById('libraryCountTag').textContent = list.length;
-      
-      const drop = document.getElementById('quickWatchlistDropdown');
-      if (list.length === 0) {
-        drop.innerHTML = '<div class="p-3 text-center text-slate-500 text-[11px] font-mono">No entries saved yet.</div>';
+      document.getElementById('drawerCountBadge').textContent = list.length;
+      renderDrawerList(list);
+    }
+
+    function renderDrawerList(items) {
+      const container = document.getElementById('drawerItemsList');
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="py-12 text-center text-slate-500 font-mono text-xs">Your library is empty. Click the heart or bookmark icon on any card to save titles.</div>';
         return;
       }
 
-      drop.innerHTML = list.slice(0, 6).map(it => `
-        <a href="entry.html?id=${it.id}&type=${it.type}" class="flex items-center gap-2 p-1.5 hover:bg-cardHover rounded-lg transition-colors">
-          <img src="${it.cover}" class="w-7 h-9 object-cover rounded shrink-0">
-          <div class="min-w-0 flex-1">
-            <p class="text-white text-xs truncate font-medium">${it.title}</p>
-            <span class="text-[10px] text-pink-400 uppercase font-mono">${it.type}</span>
-          </div>
-        </a>
+      container.innerHTML = items.map(item => `
+        <div class="py-2.5 flex items-center justify-between gap-3 group">
+          <a href="entry.html?id=${item.id}&type=${item.type}" class="flex items-center gap-3 min-w-0 flex-1">
+            <img src="${item.cover}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/10">
+            <div class="min-w-0">
+              <h4 class="text-white text-xs font-bold truncate group-hover:text-brandPink transition-colors">${item.title}</h4>
+              <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400 mt-1">
+                <span class="text-amber-300 font-bold"><i class="fa-solid fa-star text-[8px]"></i> ${item.score}</span>
+                <span class="uppercase text-cyan-400">${item.type}</span>
+              </div>
+            </div>
+          </a>
+          <button onclick="toggleWatchlist({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}'})" class="text-slate-500 hover:text-red-400 p-1.5 transition-colors">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       `).join('');
+    }
+
+    function filterLibraryDrawer(category) {
+      document.querySelectorAll('.lib-filter-pill').forEach(pill => {
+        if (pill.getAttribute('data-lib') === category) {
+          pill.className = 'lib-filter-pill px-2.5 py-1 rounded-md bg-brandPink text-white font-bold';
+        } else {
+          pill.className = 'lib-filter-pill px-2.5 py-1 rounded-md bg-cardBg text-slate-400 hover:text-white';
+        }
+      });
+
+      const list = getWatchlist();
+      if (category === 'all') {
+        renderDrawerList(list);
+      } else {
+        renderDrawerList(list.filter(i => i.type === category));
+      }
+    }
+
+    function toggleLibraryDrawer() {
+      const drawer = document.getElementById('libraryDrawer');
+      drawer.classList.toggle('hidden');
     }
 
     // ==============================================================
@@ -895,6 +1028,51 @@
       }
     }
 
+    async function fetchClassicsFeed() {
+      const container = document.getElementById('classicsGrid');
+      try {
+        const res = await fetch(ANILIST_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: QUERY_CLASSICS })
+        });
+        const json = await res.json();
+        const classics = json.data?.Page?.media || [];
+
+        container.innerHTML = classics.map(item => {
+          const entryUrl = `entry.html?id=${item.id}&type=anime`;
+          const title = item.title.english || item.title.romaji;
+          const score = item.averageScore ? (item.averageScore / 10).toFixed(1) : '9.0';
+          const genre = item.genres[0] || 'Classic';
+
+          return `
+            <div class="media-card rounded-2xl overflow-hidden flex flex-col justify-between group relative">
+              <div class="relative aspect-[3/4.2] overflow-hidden bg-cardBg">
+                <a href="${entryUrl}" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(title)}', type: 'anime'})" class="block w-full h-full">
+                  <img src="${item.coverImage?.large}" alt="${escapeAttr(title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </a>
+                <div class="absolute top-2 left-2 pointer-events-none">
+                  <span class="bg-obsidian/85 backdrop-blur-md text-amber-300 text-[11px] font-mono font-bold px-2 py-0.5 rounded-lg border border-white/10 flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-crown text-[9px] text-amber-400"></i> ${score}
+                  </span>
+                </div>
+              </div>
+              <div class="p-3">
+                <h3 class="font-bold text-white text-xs leading-snug line-clamp-1 group-hover:text-brandPink transition-colors">
+                  <a href="${entryUrl}">${title}</a>
+                </h3>
+                <div class="text-[11px] font-mono text-slate-400 mt-1 truncate">
+                  ${item.episodes ? `${item.episodes} eps` : 'Classic'} • ${genre}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        console.warn('Classics load error', e);
+      }
+    }
+
     // ==============================================================
     // 6. BROADCAST RADAR (UPCOMING EPISODES & REAL-TIME TIMERS)
     // ==============================================================
@@ -920,6 +1098,7 @@
         }));
 
         document.getElementById('radarCountHeader').textContent = `${radarSchedules.length} Airing Titles`;
+        document.getElementById('quickRadarCount').textContent = `${radarSchedules.length} Shows`;
         renderBroadcastRadar();
         startRadarTicker();
 
@@ -1110,14 +1289,14 @@
                 >
               </a>
 
-              <!-- Star Rating Pill (Top Left matching reference) -->
+              <!-- Star Rating Pill -->
               <div class="absolute top-2 left-2 pointer-events-none">
                 <span class="bg-obsidian/85 backdrop-blur-md text-amber-300 text-[11px] font-mono font-bold px-2 py-0.5 rounded-lg border border-white/10 flex items-center gap-1 shadow-sm">
                   <i class="fa-solid fa-star text-[9px] text-amber-400"></i> ${item.score}
                 </span>
               </div>
 
-              <!-- Quick Bookmark Heart Button (Top Right) -->
+              <!-- Quick Bookmark Heart Button -->
               <button 
                 onclick="event.stopPropagation(); toggleWatchlist({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}', cover: '${item.cover}', score: '${item.score}', episodes: '${item.episodes}'})"
                 class="absolute top-2 right-2 w-7 h-7 rounded-full bg-obsidian/80 hover:bg-obsidian backdrop-blur-md border border-white/20 text-slate-300 hover:text-brandPink flex items-center justify-center transition-all active:scale-90"
@@ -1127,7 +1306,7 @@
               </button>
             </div>
 
-            <!-- Card Bottom Info (Title & Units + Genre matching screenshot) -->
+            <!-- Card Bottom Info -->
             <div class="p-3">
               <h3 class="font-bold text-white text-xs sm:text-[13px] leading-snug line-clamp-1 group-hover:text-brandPink transition-colors">
                 <a href="${entryUrl}" onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(item.title)}', type: '${item.type}'})">
@@ -1156,7 +1335,6 @@
       const hentaiBtn = document.getElementById('tabNavHentai');
       const title = document.getElementById('sectionTitle');
 
-      // Reset tab pill styles
       [animeBtn, mangaBtn, hentaiBtn].forEach(b => {
         b.className = 'media-mode-pill px-4 py-1 rounded-full text-xs font-semibold text-slate-300 hover:text-white transition-all';
       });
@@ -1180,18 +1358,23 @@
       const dot = document.getElementById('nsfwDot');
       const label = document.getElementById('nsfwLabel');
       const bar = document.getElementById('nsfwWarningBar');
+      const quickStatus = document.getElementById('quickVaultStatus');
 
       if (isAdultFilterEnabled) {
         dot.className = 'w-2 h-2 rounded-full bg-brandPink animate-ping';
         label.textContent = '18+ ON';
         label.classList.add('text-brandPink');
         bar.classList.remove('hidden');
+        quickStatus.textContent = 'UNLOCKED (18+)';
+        quickStatus.className = 'text-brandPink font-bold';
         triggerToast('Adult 18+ media unlocked', 'fa-triangle-exclamation text-pink-400');
       } else {
         dot.className = 'w-2 h-2 rounded-full bg-slate-500';
         label.textContent = '18+ OFF';
         label.classList.remove('text-brandPink');
         bar.classList.add('hidden');
+        quickStatus.textContent = 'LOCKED (18+)';
+        quickStatus.className = 'text-slate-400 font-bold';
         triggerToast('Adult 18+ filter applied');
       }
 
@@ -1211,7 +1394,7 @@
     }
 
     // ==============================================================
-    // 10. REAL-TIME SEARCH MODAL (CTRL+K)
+    // 10. REAL-TIME SEARCH MODAL (CTRL+K) WITH HENTAI SEARCH SUPPORT
     // ==============================================================
     let searchDebounceTimer = null;
 
@@ -1225,6 +1408,19 @@
       container.innerHTML = '<div class="text-center py-10 text-brandPink font-mono text-xs"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Searching AniList...</div>';
 
       const scopeRadio = document.querySelector('input[name="searchScope"]:checked')?.value || 'ANIME';
+      
+      // Handle Hentai scope specifically
+      let typeParam = 'ANIME';
+      let isAdultParam = isAdultFilterEnabled;
+
+      if (scopeRadio === 'HENTAI') {
+        typeParam = 'ANIME';
+        isAdultParam = true; // explicitly search adult catalog
+      } else if (scopeRadio === 'MANGA') {
+        typeParam = 'MANGA';
+      } else {
+        typeParam = 'ANIME';
+      }
 
       try {
         const res = await fetch(ANILIST_API, {
@@ -1234,8 +1430,8 @@
             query: QUERY_LIVE_SEARCH,
             variables: {
               search: term.trim(),
-              type: scopeRadio,
-              isAdult: isAdultFilterEnabled
+              type: typeParam,
+              isAdult: isAdultParam
             }
           })
         });
@@ -1249,14 +1445,15 @@
         }
 
         container.innerHTML = results.map(item => {
-          const entryUrl = `entry.html?id=${item.id}&type=${scopeRadio.toLowerCase()}`;
+          const itemType = item.isAdult ? 'hentai' : (item.type === 'MANGA' ? 'manga' : 'anime');
+          const entryUrl = `entry.html?id=${item.id}&type=${itemType}`;
           const title = item.title.english || item.title.romaji;
           const score = item.averageScore ? (item.averageScore / 10).toFixed(1) : '8.0';
 
           return `
             <a 
               href="${entryUrl}" 
-              onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(title)}', type: '${scopeRadio.toLowerCase()}'})"
+              onclick="logCardClick({id: '${item.id}', title: '${escapeAttr(title)}', type: '${itemType}'})"
               class="flex items-center gap-3 p-2 rounded-xl hover:bg-cardBg transition-colors group"
             >
               <img 
@@ -1267,6 +1464,7 @@
                 <div class="flex items-center gap-2 font-mono text-[10px]">
                   <span class="text-amber-300 font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${score}</span>
                   <span class="text-slate-400 uppercase">• ${item.format || 'ENTRY'}</span>
+                  ${item.isAdult ? '<span class="text-pink-400 font-bold border border-pink-500/30 px-1 rounded bg-pink-500/10">18+</span>' : ''}
                 </div>
                 <h4 class="text-white text-xs font-semibold truncate group-hover:text-brandPink transition-colors mt-0.5">
                   ${title}
@@ -1300,7 +1498,7 @@
     // 11. INITIALIZATION & GLOBAL SHORTCUTS
     // ==============================================================
     document.addEventListener('DOMContentLoaded', () => {
-      // Record page impression
+      // Record page view for analytics
       const stats = getAnalytics();
       stats.pageViews = (stats.pageViews || 0) + 1;
       localStorage.setItem(ANALYTICS_KEY, JSON.stringify(stats));
@@ -1308,9 +1506,7 @@
       updateLibraryUI();
       fetchMediaFeed();
       fetchBroadcastRadar();
-
-      // Search Modal trigger button
-      document.getElementById('openSearchModalBtn').addEventListener('click', openSearchModal);
+      fetchClassicsFeed();
 
       // Close modal on backdrop click
       modal.addEventListener('click', (e) => {
@@ -1338,12 +1534,18 @@
       // Radio Scope change
       document.querySelectorAll('input[name="searchScope"]').forEach(radio => {
         radio.addEventListener('change', () => {
+          const warningTag = document.getElementById('searchHentaiWarningTag');
+          if (radio.value === 'HENTAI') {
+            warningTag.classList.remove('hidden');
+          } else {
+            warningTag.classList.add('hidden');
+          }
           executeModalSearch(modalInput.value);
         });
       });
     });
 
-    // Helper functions
+    // Helper utilities
     function triggerToast(message, iconClass = 'fa-check text-brandPink') {
       const toast = document.getElementById('toastNotification');
       const msg = document.getElementById('toastMsg');
